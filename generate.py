@@ -51,7 +51,7 @@ fira.fontname = '{}-{}'.format(familyname, weight)
 fira.fullname = '{} {}'.format(familyname, weight)
 fira.weight = weight
 fira.version = version
-fira.copyright = copyright
+fira.copyright = '{}\n{}\n{}'.format(copyright, fira.copyright, plex.copyright)
 fira.sfntRevision = None
 fira.appendSFNTName('English (US)', 'UniqueID', '{};{}-{}'.format(version, familyname, weight))
 fira.appendSFNTName('English (US)', 'Version', 'Version {}'.format(version))
