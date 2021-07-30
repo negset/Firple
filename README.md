@@ -1,6 +1,6 @@
 # プログラミング向けフォント Firple
 
-Firple は，Fira Code と IBM Plex Sans JP を合成したプログラミング向けフォントです．
+Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans JP](https://github.com/IBM/plex) を合成したプログラミング向けフォントです。
 
 ![Firple Regular サンプル](https://github.com/negset/Firple/raw/images/sample.png)
 
@@ -8,20 +8,20 @@ Firple は，Fira Code と IBM Plex Sans JP を合成したプログラミング
 
 - 豊富で美麗なグリフ
 
-  Fira Code が持つグリフは全てそのまま利用できます．
-  それ以外のグリフは IBM Plex Sans JP 由来のものが適用されます．
+  Fira Code が持つグリフを全てそのまま利用できます。  
+  それ以外のグリフは IBM Plex Sans JP 由来のものが適用されます。
 
 - 横幅を 1:2 に調整
 
-  半角文字と全角文字の横幅の比が 1:2 に揃えてあります．
+  半角文字と全角文字の横幅の比を 1:2 に揃えてあります。
 
 - リガチャに対応
 
-  Fira Code 由来のコーディング向けリガチャが全てそのまま利用できます．
+  Fira Code が持つコーディング向けリガチャを利用できます。
 
 - 2 種のウェイト
 
-  Regular と Bold の 2 ウェイトがあります．
+  Regular と Bold の 2 ウェイトがあります。
 
 ## フォントファミリーの説明
 
@@ -36,7 +36,7 @@ Firple Bold   |Fira Code Bold + IBM Plex Sans JP Bold
 
 ## ダウンロード
 
-[Releases ページ](https://github.com/negset/Firple/releases) から入手できます．
+[Releases ページ](https://github.com/negset/Firple/releases) から入手できます。
 
 ## ビルド
 
