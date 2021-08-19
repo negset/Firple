@@ -12,7 +12,7 @@ args = parser.parse_args(sys.argv[1:])
 
 familyname = 'Firple'
 weight = args.weight
-version = '1.000'
+version = '1.100'
 copyright = 'Copyright 2021 negset'
 
 plex_path = args.plex_path
@@ -25,6 +25,7 @@ fira = fontforge.open(fira_path)
 scale = 1.9
 half_width = fira['A'].width
 full_width = half_width * 2
+overwrite_glyphs = ['「', '」']
 
 print('### {} {} ###'.format(familyname, weight))
 
@@ -35,6 +36,11 @@ for i in range(0x10ffff + 1):
         fira.selection.select(i)
         plex.copy()
         fira.paste()
+for glyph in overwrite_glyphs:
+    plex.selection.select(ord(glyph))
+    fira.selection.select(ord(glyph))
+    plex.copy()
+    fira.paste()
 
 print('# Transforming glyphs...')
 fira.selection.changed()
