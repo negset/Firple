@@ -22,6 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const weightSldr = document.getElementById('weight');
   weightSldr.addEventListener('input', () => {
-    textArea.style.fontSize = weightSldr.value;
+    textArea.style.fontSize = weightSldr.value + "%";
   });
 });
