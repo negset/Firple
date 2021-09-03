@@ -1,0 +1,79 @@
+@font-face {
+  font-family: "Firple";
+  font-weight: 400;
+  src: url("../fonts/Firple-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Firple";
+  font-weight: 700;
+  src: url("../fonts/Firple-Bold.woff2") format("woff2");
+}
+
+.navbar {
+  box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
+  height: 56px;
+}
+
+@media screen and (min-width: 1200px) {
+  .navbar {
+    padding: 0 calc((100vw - 1200px) / 2);
+  }
+}
+
+.navbar-burger ion-icon {
+  width: calc(100% - 1.4rem);
+  height: calc(100% - 1.4rem);
+  padding: 0.7rem;
+}
+
+.navbar-menu {
+  font-weight: 700;
+}
+
+.main {
+  min-height: calc(100vh - 56px - 112px);
+}
+
+.footer {
+  height: 112px;
+  padding: 44px 0;
+  text-align: center;
+}
+
+.section {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h2 ion-icon {
+  color: #485fc7;
+  font-size: 28px;
+  margin-right: 6px;
+  vertical-align: -0.15rem;
+}
+
+strong {
+  color: hsl(348, 100%, 61%);
+}
+
+.font-firple {
+  font-family: "Firple";
+}
+
+.sample-config {
+  margin: 0.5rem 0;
+}
+
+.sample-config > label {
+  margin-right: 0.5rem;
+}
+
+textarea#sample-text {
+  font-family: "Firple";
+  width: 640px;
+  height: 240px;
+  padding: 1rem;
+  font-size: 1.2rem;
+  line-height: 1.5em;
+}

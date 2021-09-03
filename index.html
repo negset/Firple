@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=1,minimum-scale=1,maximum-scale=1">
+
+  <title>プログラミング用フォント Firple</title>
+
+  <meta name="description" content="プログラミング用フォント「Firple」の公式サイトです。">
+  <meta name="pinterest" content="nopin">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <span class="font-firple">Firple</span>
+      </div>
+
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBurgerTarget">
+        <ion-icon name="menu-outline"></ion-icon>
+      </a>
+    </div>
+
+    <div id="navbarBurgerTarget" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="#about">
+          これは何?
+        </a>
+        <a class="navbar-item" href="#spec">
+          特徴
+        </a>
+        <a class="navbar-item" href="#download">
+          ダウンロード
+        </a>
+      </div>
+
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="buttons">
+            <a class="button is-link" href="https://github.com/negset/Firple" target="_blank"
+              rel="noopener noreferrer">
+              <span class="icon">
+                <ion-icon name="logo-github"></ion-icon>
+              </span>
+              <span>Star</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main">
+
+    <section class="section">
+      <div class="has-text-centered">
+        <h6 class="title is-6 font-firple">プログラミング用フォント</h6>
+        <h1 class="title is-1 font-firple">Firple</h1>
+        <a class="button is-link is-medium is-focused" href="https://github.com/negset/Firple/releases" target="_blank"
+          rel="noopener noreferrer">
+          <span class="icon">
+            <ion-icon name="download-outline"></ion-icon>
+          </span>
+          <span>Download</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="content">
+        <h2 class="title" id="about">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          これは何?
+        </h2>
+        <p>
+          <a href="https://github.com/tonsky/FiraCode" target="_blank" rel="noopener noreferrer">Fira Code</a> と <a
+            href="https://github.com/IBM/plex" target="_blank" rel="noopener noreferrer">IBM Plex Sans
+            JP</a> を合成したプログラミング用フォントです。
+        </p>
+        <p>グリフの改変等は行わず、字幅を調整して合成しただけのシンプルなフォントです。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="content">
+        <h2 class="title is-3" id="spec">
+          <ion-icon name="thumbs-up-outline"></ion-icon>
+          特徴
+        </h2>
+        <h3 class="title is-5">美しさと可読性を兼ね備えたグリフ</h3>
+        <p>Fira Code が持つグリフを全てそのまま利用できます。<br>
+          それ以外のグリフは IBM Plex Sans JP 由来のものが適用されます。</p>
+        <h3 class="title is-5">横幅を 1:2 に調整</h3>
+        <p>半角文字と全角文字の横幅の比を 1:2 に揃えています。</p>
+        <h3 class="title is-5">リガチャに対応</h3>
+        <p>Fira Code が持つプログラミング向けのリガチャを利用できます。</p>
+        <h3 class="title is-5">2 種のウェイト</h3>
+        <p>Regular と Bold の 2 ウェイトがあります。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="content">
+        <h2 class="title is-3" id="family">
+          <ion-icon name="text-outline"></ion-icon>
+          フォントファミリー
+        </h2>
+        <table>
+          <thead>
+            <tr>
+              <th>フォント名</th>
+              <th>説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Firple Regular</td>
+              <td>Fira Code Regular + IBM Plex Sans JP Text</td>
+            </tr>
+            <tr>
+              <td>Firple Bold</td>
+              <td>Fira Code Bold + IBM Plex Sans JP Bold</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="content">
+        <h2 class="title" id="sample">
+          <ion-icon name="search-outline"></ion-icon>
+          サンプル
+        </h2>
+        <p>サンプルテキストを自由に変更できます。</p>
+        <div class="sample-config">
+          <input type="radio" id="regular" name="weight" checked>
+          <label for="regular">Regular</label>
+          <input type="radio" id="bold" name="weight">
+          <label for="bold">Bold</label>
+        </div>
+        <div class="sample-config">
+          <input type="range" id="weight" min="10" max="30" value="16">
+        </div>
+        <textarea id="sample-text">
+彼らの機器や装置はすべて生命体だ。
+Almost before we knew it, we had left ground.
+
+!=->>++:=</textarea>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="content">
+        <h2 class="title is-3" id="license">
+          <ion-icon name="school-outline"></ion-icon>
+          ライセンス
+        </h2>
+        <a href="https://github.com/negset/Firple/blob/master/LICENSE.txt">SIL Open Font License (OFL) Version 1.1</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="content">
+        <h2 class="title is-3" id="download">
+          <ion-icon name="download-outline"></ion-icon>
+          ダウンロード
+        </h2>
+        <p>
+          <a href="https://github.com/negset/Firple/releases" target="_blank" rel="noopener noreferrer">GitHub の
+            Releases
+            ページ</a>
+          からフォントをダウンロードできます。
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="footer">
+    Firple © 2021 negset
+  </footer>
+
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <script src="js/script.js"></script>
+</body>
+
+</html>
