@@ -12,12 +12,11 @@
 
 .navbar {
   box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
-  height: 56px;
 }
 
 @media screen and (min-width: 1200px) {
   .navbar {
-    padding: 0 calc((100vw - 1200px) / 2);
+    padding: 0 calc((100% - 1200px) / 2);
   }
 }
 
@@ -31,14 +30,24 @@
   font-weight: 700;
 }
 
-.main {
-  min-height: calc(100vh - 56px - 112px);
+@media screen and (max-width: 1023px) {
+  .navbar-menu {
+    display: block;
+    position: absolute;
+    font-weight: 700;
+    width: 100%;
+    opacity: 0%;
+    transition-duration: 0.5s;
+  }
+
+  .navbar-menu.is-active {
+    opacity: 100%;
+  }
 }
 
 .footer {
-  height: 112px;
-  padding: 44px 0;
   text-align: center;
+  padding: 2rem 0;
 }
 
 .section {
@@ -69,7 +78,7 @@ strong {
   margin-right: 0.5rem;
 }
 
-textarea#sample-text {
+.sample-text {
   font-family: "Firple";
   width: 640px;
   max-width: 100%;

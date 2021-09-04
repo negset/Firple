@@ -1,17 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-  if ($navbarBurgers.length > 0) {
-    $navbarBurgers.forEach(el => {
-      el.addEventListener('click', () => {
-        const target = el.dataset.target;
-        const $target = document.getElementById(target);
-        el.classList.toggle('is-active');
-        $target.classList.toggle('is-active');
-      });
-    });
-  }
+  const main = document.querySelector('.main');
+  const navHeight = window.getComputedStyle(document.querySelector('nav'))['height'];
+  const footerHeight = window.getComputedStyle(document.querySelector('.footer'))['height'];
+  main.style.minHeight = `calc(100vh - ${navHeight} - ${footerHeight})`;
 
-  const textArea = document.getElementById('sample-text');
+  const navbarBurger = document.querySelector('.navbar-burger');
+  const burgerTarget = document.getElementById(navbarBurger.dataset.target);
+  navbarBurger.addEventListener('click', () => {
+    navbarBurger.classList.toggle('is-active');
+    burgerTarget.classList.toggle('is-active');
+  });
+  main.addEventListener('click', () => {
+    burgerTarget.classList.remove('is-active');
+  });
+
+  const textArea = document.querySelector('.sample-text');
   const regularBtn = document.getElementById('regular');
   regularBtn.addEventListener('input', () => {
     textArea.style.fontWeight = 400;
@@ -21,7 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     textArea.style.fontWeight = 700;
   });
   const weightSldr = document.getElementById('weight');
+  weightSldr.value = parseInt(window.getComputedStyle(textArea)['fontSize']);
   weightSldr.addEventListener('input', () => {
-    textArea.style.fontSize = weightSldr.value + "px";
+    textArea.style.fontSize = weightSldr.value + 'px';
   });
 });
