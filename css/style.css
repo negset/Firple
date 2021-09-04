@@ -38,10 +38,12 @@
     width: 100%;
     opacity: 0%;
     transition-duration: 0.5s;
+    pointer-events: none;
   }
 
   .navbar-menu.is-active {
     opacity: 100%;
+    pointer-events: auto;
   }
 }
 
