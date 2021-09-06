@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     burgerTarget.classList.toggle('is-active');
   });
   main.addEventListener('click', () => {
+    navbarBurger.classList.remove('is-active');
     burgerTarget.classList.remove('is-active');
   });
 

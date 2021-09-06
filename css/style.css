@@ -26,6 +26,18 @@
   padding: 0.7rem;
 }
 
+.navbar-burger ion-icon[name="close-outline"] {
+  display: none;
+}
+
+.navbar-burger.is-active ion-icon[name="close-outline"] {
+  display: inline-block;
+}
+
+.navbar-burger.is-active ion-icon[name="menu-outline"] {
+  display: none;
+}
+
 .navbar-menu {
   font-weight: 700;
 }
