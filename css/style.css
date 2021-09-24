@@ -18,7 +18,8 @@
   .navbar,
   .main,
   .footer {
-    padding: 0 calc((100% - 1200px) / 2);
+    padding-left: calc((100% - 1200px) / 2);
+    padding-right: calc((100% - 1200px) / 2);
   }
 }
 
