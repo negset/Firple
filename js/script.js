@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const main = document.querySelector('.main');
+  const main = document.querySelector('main');
   const navHeight = window.getComputedStyle(document.querySelector('nav'))['height'];
-  const footerHeight = window.getComputedStyle(document.querySelector('.footer'))['height'];
+  const footerHeight = window.getComputedStyle(document.querySelector('footer'))['height'];
   main.style.minHeight = `calc(100vh - ${navHeight} - ${footerHeight})`;
 
   const navbarBurger = document.querySelector('.navbar-burger');

@@ -15,7 +15,9 @@
 }
 
 @media screen and (min-width: 1200px) {
-  .navbar {
+  .navbar,
+  .main,
+  .footer {
     padding: 0 calc((100% - 1200px) / 2);
   }
 }
@@ -61,12 +63,8 @@
 
 .footer {
   text-align: center;
-  padding: 2rem 0;
-}
-
-.section {
-  max-width: 1200px;
-  margin: 0 auto;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 h2 ion-icon {
