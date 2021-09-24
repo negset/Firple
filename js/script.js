@@ -29,4 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
   weightSldr.addEventListener('input', () => {
     textArea.style.fontSize = weightSldr.value + 'px';
   });
+  const ligatureChk = document.getElementById('ligature');
+  ligatureChk.addEventListener('input', () => {
+    textArea.style.fontVariantLigatures = ligatureChk.checked ? "normal" : "none";
+  });
 });
