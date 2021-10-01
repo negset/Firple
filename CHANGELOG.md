@@ -7,4 +7,4 @@
 - 最初のリリース
 - ベースフォント
   - Fira Code v5.2
-  - IBM Plex Sans JP (hinted) v5.2.1
+  - IBM Plex Sans JP (hinted) v1.000
