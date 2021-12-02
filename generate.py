@@ -12,7 +12,7 @@ args = parser.parse_args(sys.argv[1:])
 
 familyname = 'Firple'
 weight = args.weight
-version = '1.100'
+version = '1.200'
 copyright = 'Copyright 2021 negset'
 
 plex_path = args.plex_path
@@ -61,8 +61,9 @@ fira.copyright = '{}\n{}\n{}'.format(copyright, fira.copyright, plex.copyright)
 fira.sfntRevision = None
 fira.appendSFNTName('English (US)', 'UniqueID', '{};{}-{}'.format(version, familyname, weight))
 fira.appendSFNTName('English (US)', 'Version', 'Version {}'.format(version))
-fira.os2_unicoderanges = (-1073741073, 1791491577, 33554450, 0)
-fira.os2_codepages = (1610743967, 0)
+# see https://gist.github.com/negset/3a6a728e959acc03f7d66a7c52b1987a
+fira.os2_unicoderanges = (-536870161, 2059927035, 33562682, 0)
+fira.os2_codepages = (1610743967, -539557888)
 
 print('# Generating fonts...')
 fira.generate(firple_path)
