@@ -3,6 +3,7 @@ import psMat
 from fontTools.ttLib import TTFont
 import argparse
 import sys
+from operator import or_
 
 parser = argparse.ArgumentParser()
 parser.add_argument('weight')
@@ -12,12 +13,12 @@ args = parser.parse_args(sys.argv[1:])
 
 familyname = 'Firple'
 weight = args.weight
-version = '1.200'
+version = '1.300'
 copyright = 'Copyright 2021 negset'
 
 plex_path = args.plex_path
 fira_path = args.fira_path
-firple_path = '{}-{}.ttf'.format(familyname, weight)
+firple_path = f'{familyname}-{weight}.ttf'
 
 plex = fontforge.open(plex_path)
 fira = fontforge.open(fira_path)
@@ -27,7 +28,7 @@ half_width = fira['A'].width
 full_width = half_width * 2
 overwrite_glyphs = ['「', '」']
 
-print('### {} {} ###'.format(familyname, weight))
+print(f'### {familyname} {weight} ###')
 
 print('# Copying glyphs...')
 for i in range(0x10ffff + 1):
@@ -53,17 +54,18 @@ for glyph in fira.selection.byGlyphs:
 
 print('# Setting font parameters...')
 fira.familyname = familyname
-fira.fontname = '{}-{}'.format(familyname, weight)
-fira.fullname = '{} {}'.format(familyname, weight)
+fira.fontname = f'{familyname}-{weight}'
+fira.fullname = f'{familyname} {weight}'
 fira.weight = weight
 fira.version = version
-fira.copyright = '{}\n{}\n{}'.format(copyright, fira.copyright, plex.copyright)
+fira.copyright = f'{copyright}\n{fira.copyright}\n{plex.copyright}'
 fira.sfntRevision = None
-fira.appendSFNTName('English (US)', 'UniqueID', '{};{}-{}'.format(version, familyname, weight))
-fira.appendSFNTName('English (US)', 'Version', 'Version {}'.format(version))
-# see https://gist.github.com/negset/3a6a728e959acc03f7d66a7c52b1987a
-fira.os2_unicoderanges = (-536870161, 2059927035, 33562682, 0)
-fira.os2_codepages = (1610743967, -539557888)
+fira.appendSFNTName('English (US)', 'UniqueID',
+                    f'{version};{familyname}-{weight}')
+fira.appendSFNTName('English (US)', 'Version', f'Version {version}')
+fira.os2_unicoderanges = tuple(
+    map(or_, plex.os2_unicoderanges, fira.os2_unicoderanges))
+fira.os2_codepages = tuple(map(or_, plex.os2_codepages, fira.os2_codepages))
 
 print('# Generating fonts...')
 fira.generate(firple_path)
