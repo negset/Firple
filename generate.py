@@ -47,10 +47,11 @@ print('# Transforming glyphs...')
 fira.selection.changed()
 for glyph in fira.selection.byGlyphs:
     scaled = glyph.width * scale
-    w = full_width if scaled > half_width else half_width
-    x = (w - scaled) / 2
-    glyph.transform(psMat.compose(psMat.scale(scale), psMat.translate(x, 0)))
-    glyph.width = w
+    width = full_width if scaled > half_width else half_width
+    trans = (width - scaled) / 2
+    glyph.transform(psMat.compose(
+        psMat.scale(scale), psMat.translate(trans, 0)))
+    glyph.width = width
 
 print('# Setting font parameters...')
 fira.familyname = familyname
