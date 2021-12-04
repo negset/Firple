@@ -46,10 +46,10 @@ for glyph in overwrite_glyphs:
 print('# Transforming glyphs...')
 fira.selection.changed()
 for glyph in fira.selection.byGlyphs:
-    w = full_width if glyph.width * scale > half_width else half_width
-    x = (w - glyph.width * scale) / 2
-    glyph.transform(psMat.scale(scale))
-    glyph.transform(psMat.translate(x, 0))
+    scaled = glyph.width * scale
+    w = full_width if scaled > half_width else half_width
+    x = (w - scaled) / 2
+    glyph.transform(psMat.compose(psMat.scale(scale), psMat.translate(x, 0)))
     glyph.width = w
 
 print('# Setting font parameters...')
