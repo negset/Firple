@@ -6,12 +6,12 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
 ## 特徴
 
-- 豊富で美麗なグリフ
+- 豊富なグリフ
 
   Fira Code が持つグリフを全てそのまま利用できます。  
-  それ以外のグリフは IBM Plex Sans JP 由来のものが適用されます。
+  日本語文字などは IBM Plex Sans JP のグリフが適用されます。
 
-- 横幅を 1:2 に調整
+- 字幅を 1:2 に調整
 
   半角文字と全角文字の横幅の比を 1:2 に揃えています。
 
@@ -23,12 +23,18 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
   Regular と Bold の 2 ウェイトがあります。
 
+- 独自のイタリック体
+
+  オリジナルの字形を持つイタリック体があります。
+
 ## フォントファミリー
 
 フォント名    |説明
 :-------------|:----------------------------------------
-Firple Regular|Fira Code Regular + IBM Plex Sans JP Text
-Firple Bold   |Fira Code Bold + IBM Plex Sans JP Bold
+Firple Regular    |Fira Code Regular + IBM Plex Sans JP Text
+Firple Bold       |Fira Code Bold + IBM Plex Sans JP Bold
+Firple Italic     |Firple Regular のイタリック体
+Firple Bold Italic|Firple Bold のイタリック体
 
 ## ライセンス
 
@@ -61,5 +67,5 @@ fonts/IBMPlexSansJP-Text.ttf
 ### コマンド
 
 ```
-$ ./build.sh
+$ ./run.sh
 ```

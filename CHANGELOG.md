@@ -1,3 +1,13 @@
+## Version 2.000
+
+- イタリック体を追加
+- macOS で等幅フォントとして認識されない問題の修正
+- FiraCode のバージョンを更新
+- 生成スクリプトを更新
+- ベースフォント
+  - Fira Code v6.2
+  - IBM Plex Sans JP (TrueType/hinted) v1.000
+
 ## Version 1.300
 
 - FiraCode のバージョンを更新
