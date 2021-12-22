@@ -90,7 +90,6 @@ def generate_italic():
     orig = fontforge.open(orig_path)
     trans = -100
     skew = 12
-    glyphs = ['a', 'b', 'e', 'f', 'g', 'k', 'q']
 
     if weight == 'Regular':
         print(f'\n##### {family} Italic #####')
@@ -107,11 +106,12 @@ def generate_italic():
         glyph.transform(mat)
 
     print('# Copying glyphs...')
-    for glyph in glyphs:
-        orig.selection.select(ord(glyph))
-        firple.selection.select(ord(glyph))
-        orig.copy()
-        firple.paste()
+    for i in range(sys.maxunicode + 1):
+        if orig.__contains__(i) and firple.__contains__(i):
+            orig.selection.select(i)
+            firple.selection.select(i)
+            orig.copy()
+            firple.paste()
 
     print('# Setting font parameters...')
     firple.italicangle = -skew
