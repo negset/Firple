@@ -127,6 +127,14 @@
               <td>Firple Bold</td>
               <td>Fira Code Bold + IBM Plex Sans JP Bold</td>
             </tr>
+            <tr>
+              <td>Firple Italic</td>
+              <td>Firple Regular のイタリック体</td>
+            </tr>
+            <tr>
+              <td>Firple Bold Italic</td>
+              <td>Firple Bold のイタリック体</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -139,20 +147,22 @@
           サンプル
         </h2>
         <p>サンプルテキストを自由に変更できます。</p>
-        <div class="sample-config">
-          <input type="radio" id="regular" name="weight" checked>
-          <label for="regular">Regular</label>
-          <input type="radio" id="bold" name="weight">
-          <label for="bold">Bold</label>
+        <div class="sample-config select">
+          <select id="subfamily">
+            <option value="regular">Firple Regular</option>
+            <option value="bold">Firple Bold</option>
+            <option value="italic">Firple Italic</option>
+            <option value="bold-italic">Firple Bold Italic</option>
+          </select>
         </div>
         <div class="sample-config">
-          <input type="range" id="weight" min="10" max="30">
+          <input type="range" id="weight" min="10" max="40">
         </div>
         <div class="sample-config">
           <input type="checkbox" id="ligature" checked>
-          <label for="ligature">リガチャ</label>
+          <label for="ligature">リガチャを有効にする</label>
         </div>
-        <textarea class="sample-text">
+        <textarea class="sample-text textarea">
 彼らの機器や装置はすべて生命体だ。
 Almost before we knew it, we had left the ground.
 
