@@ -29,12 +29,12 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
 ## フォントファミリー
 
-フォント名    |説明
-:-------------|:----------------------------------------
-Firple Regular    |Fira Code Regular + IBM Plex Sans JP Text
-Firple Bold       |Fira Code Bold + IBM Plex Sans JP Bold
-Firple Italic     |Firple Regular のイタリック体
-Firple Bold Italic|Firple Bold のイタリック体
+|フォント名         |説明                                     |
+|:------------------|:----------------------------------------|
+|Firple Regular     |Fira Code Regular + IBM Plex Sans JP Text|
+|Firple Bold        |Fira Code Bold + IBM Plex Sans JP Bold   |
+|Firple Italic      |Firple Regular のイタリック体            |
+|Firple Bold Italic |Firple Bold のイタリック体               |
 
 ## ライセンス
 
