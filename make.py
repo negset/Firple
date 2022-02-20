@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 family = 'Firple'
 weight = args.weight
-version = 2.100
+version = '2.101'
 copyright = 'Copyright 2021 negset'
 
 fira_path = args.fira_path
@@ -64,9 +64,9 @@ def generate():
     fira.fontname = f'{family}-{weight}'
     fira.fullname = f'{family} {weight}'
     fira.weight = weight
-    fira.version = str(version)
+    fira.version = version
     fira.copyright = f'{copyright}\n{fira.copyright}\n{plex.copyright}'
-    fira.sfntRevision = version
+    fira.sfntRevision = float(version)
     fira.appendSFNTName('English (US)', 'UniqueID',
                         f'{version};{family}-{weight}')
     fira.appendSFNTName('English (US)', 'Version', f'Version {version}')

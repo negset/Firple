@@ -1,6 +1,7 @@
-## Version 2.100 (2022/02/21)
+## Version 2.101 (2022/02/21)
 
 - 半角かぎ括弧｢｣のグリフが不自然に大きい問題の修正
+- バージョン表記の修正
 - ベースフォント
   - Fira Code v6.2
   - IBM Plex Sans JP (TrueType/hinted) v1.000
