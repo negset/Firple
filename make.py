@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 family = 'Firple'
 weight = args.weight
-version = 2.000
+version = 2.100
 copyright = 'Copyright 2021 negset'
 
 fira_path = args.fira_path
@@ -37,12 +37,13 @@ def generate():
 
     print('# Copying glyphs...')
     for i in range(sys.maxunicode + 1):
-        if plex.__contains__(i) and not fira.__contains__(i):
+        if i in plex and not i in fira:
             plex.selection.select(i)
             fira.selection.select(i)
             plex.copy()
             fira.paste()
     for glyph in overwrite_glyphs:
+        fira[ord(glyph)].unlinkThisGlyph()
         plex.selection.select(ord(glyph))
         fira.selection.select(ord(glyph))
         plex.copy()
@@ -97,17 +98,15 @@ def generate_italic():
         print(f'\n##### {family} {weight} Italic #####')
 
     print('# Transforming glyphs...')
-    firple.selection.all()
-    for glyph in firple.selection.byGlyphs:
-        glyph.unlinkRef()
     mat = psMat.compose(psMat.translate(trans, 0),
                         psMat.skew(math.radians(skew)))
-    for glyph in firple.selection.byGlyphs:
-        glyph.transform(mat)
+    firple.selection.all()
+    firple.unlinkReferences()
+    firple.transform(mat)
 
     print('# Copying glyphs...')
     for i in range(sys.maxunicode + 1):
-        if orig.__contains__(i) and firple.__contains__(i):
+        if i in orig and i in firple:
             orig.selection.select(i)
             firple.selection.select(i)
             orig.copy()
