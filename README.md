@@ -8,8 +8,8 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
 - 豊富なグリフ
 
-  Fira Code が持つグリフを全てそのまま利用できます。  
-  日本語文字などは IBM Plex Sans JP のグリフが適用されます。
+  Fira Code が持つグリフを全てそのまま使用できます。  
+  また日本語文字などは、IBM Plex Sans JP のグリフで補っています。
 
 - 字幅を 1:2 に調整
 
@@ -25,16 +25,31 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
 - 独自のイタリック体
 
-  オリジナルの字形を持つイタリック体があります。
+  Fira Code には無い独自の字形を持ったイタリック体があります。
+
+- Slim サブファミリー
+
+  Fira Code の字幅を縮小した Slim サブファミリーを提供しています。
 
 ## フォントファミリー
+
+### Firple
 
 |フォント名         |説明                                     |
 |:------------------|:----------------------------------------|
 |Firple Regular     |Fira Code Regular + IBM Plex Sans JP Text|
-|Firple Bold        |Fira Code Bold + IBM Plex Sans JP Bold   |
 |Firple Italic      |Firple Regular のイタリック体            |
+|Firple Bold        |Fira Code Bold + IBM Plex Sans JP Bold   |
 |Firple Bold Italic |Firple Bold のイタリック体               |
+
+### Firple Slim
+
+|フォント名             |説明                           |
+|:----------------------|:------------------------------|
+|Firple Slim Regular    |Firple Regular の字幅縮小版    |
+|Firple Slim Italic     |Firple Italic の字幅縮小版     |
+|Firple Slim Bold       |Firple Bold の字幅縮小版       |
+|Firple Slim Bold Italic|Firple Bold Italic の字幅縮小版|
 
 ## ライセンス
 
@@ -58,10 +73,10 @@ $ sudo apt install fonttools
 - 元となるフォントファイル
 
 ```
-fonts/FiraCode-Bold.ttf
-fonts/FiraCode-Regular.ttf
-fonts/IBMPlexSansJP-Bold.ttf
-fonts/IBMPlexSansJP-Text.ttf
+src/FiraCode-Bold.ttf
+src/FiraCode-Regular.ttf
+src/IBMPlexSansJP-Bold.ttf
+src/IBMPlexSansJP-Text.ttf
 ```
 
 ### コマンド
