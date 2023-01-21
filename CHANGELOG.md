@@ -11,6 +11,7 @@
 ## Version 2.101
 
 - 半角かぎ括弧｢｣のグリフが不自然に大きい問題の修正
+- バージョン表記の修正
 
 ## Version 2.000
 
@@ -22,7 +23,7 @@
   - Fira Code v6.2
   - IBM Plex Sans JP (TrueType/hinted) v1.000
 
-## Version 1.300
+## Version 1.300 (2021/12/04)
 
 - FiraCode のバージョンを更新
 - 生成スクリプトを更新
@@ -30,18 +31,18 @@
   - Fira Code v6.1
   - IBM Plex Sans JP (TrueType/hinted) v1.000
 
-## Version 1.200
+## Version 1.200 (2021/12/03)
 
 - FiraCode のバージョンを更新
 - ベースフォント
   - Fira Code v6.0
   - IBM Plex Sans JP (TrueType/hinted) v1.000
 
-## Version 1.100
+## Version 1.100 (2021/08/20)
 
 - 一部グリフ (`「`, `」`) は Plex Sans JP を使用するように変更
 
-## Version 1.000
+## Version 1.000 (2021/07/30)
 
 - 最初のリリース
 - ベースフォント
