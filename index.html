@@ -6,12 +6,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=1,minimum-scale=1,maximum-scale=1">
 
-  <title>プログラミング用フォント Firple</title>
+  <title>プログラミング向け日本語フォント Firple</title>
 
-  <meta name="description" content="プログラミング用フォント「Firple」の公式サイトです。">
+  <meta name="description" content="プログラミング向け日本語フォント「Firple」の公式サイトです。">
   <meta name="pinterest" content="nopin">
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -21,17 +22,14 @@
       <div class="navbar-item">
         <span class="font-firple">Firple</span>
       </div>
-
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-burger-target">
-        <ion-icon name="menu-outline"></ion-icon>
-        <ion-icon name="close-outline"></ion-icon>
-      </a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+        data-target="navbar-burger-target"></a>
     </div>
 
     <div id="navbar-burger-target" class="navbar-menu">
       <div class="navbar-start">
         <a class="navbar-item" href="#about">
-          これは何?
+          これは何？
         </a>
         <a class="navbar-item" href="#spec">
           特徴
@@ -44,10 +42,9 @@
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button is-link" href="https://github.com/negset/Firple" target="_blank" rel="noopener noreferrer">
-              <span class="icon">
-                <ion-icon name="logo-github"></ion-icon>
-              </span>
+            <a class="button is-link is-light" href="https://github.com/negset/Firple" target="_blank"
+              rel="noopener noreferrer">
+              <span class="icon"><i class="ri-github-fill"></i></span>
               <span>Star</span>
             </a>
           </div>
@@ -60,59 +57,63 @@
 
     <section class="section">
       <div class="has-text-centered">
-        <h6 class="title is-6 font-firple">プログラミング用フォント</h6>
+        <h6 class="title is-6 font-firple">プログラミング向け日本語フォント</h6>
         <h1 class="title is-1 font-firple">Firple</h1>
-        <a class="button is-link is-medium is-focused" href="https://github.com/negset/Firple/releases" target="_blank"
-          rel="noopener noreferrer">
-          <span class="icon">
-            <ion-icon name="download-outline"></ion-icon>
+        <a class="button is-link is-large is-rounded is-focused" href="#download">
+          <span class="icon"><i class="ri-download-line"></i>
           </span>
-          <span>Download</span>
+          <span class="font-firple">Download</span>
         </a>
       </div>
     </section>
 
     <section class="section">
       <div class="content">
-        <h2 class="title" id="about">
-          <ion-icon name="information-circle-outline"></ion-icon>
-          これは何?
-        </h2>
+        <h2 class="title" id="about">これは何？</h2>
         <p>
-          <a href="https://github.com/tonsky/FiraCode" target="_blank" rel="noopener noreferrer">Fira Code</a> と
-          <a href="https://github.com/IBM/plex" target="_blank" rel="noopener noreferrer">IBM Plex Sans JP</a> を
-          合成したプログラミング用フォントです。
+          プログラミング向けフォントとして人気の高い <a href="https://github.com/tonsky/FiraCode" target="_blank"
+            rel="noopener noreferrer">Fira Code</a> に、可読性の高い <a href="https://github.com/IBM/plex" target="_blank"
+            rel="noopener noreferrer">IBM Plex Sans JP</a> の日本語文字を合成したプログラミング向けフォントです。
+          <br>
+          Fira Code が提供するプログラミングに便利なリガチャ (合字) が利用できます。
+          <br>
+          また独自のイタリック体や長体を提供しています。
         </p>
-        <p>グリフの改変等は行わず、字幅を調整して合成しただけのシンプルなフォントです。</p>
       </div>
     </section>
 
     <section class="section">
       <div class="content">
-        <h2 class="title is-3" id="spec">
-          <ion-icon name="thumbs-up-outline"></ion-icon>
-          特徴
-        </h2>
-        <h3 class="title is-5">豊富なグリフ</h3>
+        <h2 class="title is-3" id="spec">特徴</h2>
+        <h3 class="title is-4">豊富なグリフ</h3>
         <p>Fira Code が持つグリフを全てそのまま利用できます。<br>
-          日本語文字などは IBM Plex Sans JP のグリフが適用されます。</p>
-        <h3 class="title is-5">字幅を 1:2 に調整</h3>
-        <p>半角文字と全角文字の横幅の比を 1:2 に揃えています。</p>
-        <h3 class="title is-5">リガチャに対応</h3>
+          また日本語文字などは、IBM Plex Sans JP で補っています。</p>
+        <img src="images/spec1.svg">
+        <h3 class="title is-4">字幅を調整</h3>
+        <p>半角文字と全角文字の幅を 1:2 に揃えています。</p>
+        <img src="images/spec2.svg">
+        <h3 class="title is-4">リガチャに対応</h3>
         <p>Fira Code が持つプログラミング向けのリガチャを利用できます。</p>
-        <h3 class="title is-5">2 種のウェイト</h3>
-        <p>Regular と Bold の 2 ウェイトがあります。</p>
-        <h3 class="title is-5">独自のイタリック体</h3>
-        <p>オリジナルの字形を持つイタリック体があります。</p>
+        <img src="images/spec3.svg">
+        <h3 class="title is-4">2 種のウェイト</h3>
+        <p>Regular と Bold の 2 ウェイトを提供しています。</p>
+        <img src="images/spec4.svg">
+        <h3 class="title is-4">独自のイタリック体</h3>
+        <p>Fira Code には無い Firple 独自の字形を持ったイタリック体を提供しています。</p>
+        <img src="images/spec5.svg">
+        <h3 class="title is-4">Slim サブファミリー</h3>
+        <p>Fira Code の字幅を縮小した Slim サブファミリーを提供しています。</p>
+        <img src="images/spec6.svg">
       </div>
     </section>
 
     <section class="section">
       <div class="content">
-        <h2 class="title is-3" id="family">
-          <ion-icon name="text-outline"></ion-icon>
-          フォントファミリー
-        </h2>
+        <h2 class="title is-3" id="family">フォントファミリー</h2>
+        <h3 class="title is-4">Firple</h3>
+        <p>
+          Fira Code の英字をそのまま利用できます。日本語文字は字間にゆとりが生まれます。
+        </p>
         <table class="table">
           <thead>
             <tr>
@@ -139,23 +140,54 @@
             </tr>
           </tbody>
         </table>
+        <h3 class="title is-4">Firple Slim</h3>
+        <p>
+          Fira Code の字幅を縮小しており、日本語文字が自然な字間になります。
+        </p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>フォント名</th>
+              <th>説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Firple Slim Regular</td>
+              <td>Firple Regular の字幅縮小版</td>
+            </tr>
+            <tr>
+              <td>Firple Slim Bold</td>
+              <td>Firple Bold の字幅縮小版</td>
+            </tr>
+            <tr>
+              <td>Firple Slim Italic</td>
+              <td>Firple Italic の字幅縮小版</td>
+            </tr>
+            <tr>
+              <td>Firple Slim Bold Italic</td>
+              <td>Firple Bold Italic の字幅縮小版</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
     <section class="section">
       <div class="content">
-        <h2 class="title" id="sample">
-          <ion-icon name="search-outline"></ion-icon>
-          サンプル
-        </h2>
-        <p>サンプルテキストを自由に変更できます。</p>
+        <h2 class="title" id="sample">サンプル</h2>
+        <p>サンプルテキストは自由に変更できます。</p>
         <div class="sample-config select">
           <select id="subfamily">
-            <option value="regular">Firple Regular</option>
-            <option value="bold">Firple Bold</option>
-            <option value="italic">Firple Italic</option>
-            <option value="bold-italic">Firple Bold Italic</option>
+            <option value="firple">Firple</option>
+            <option value="firple-slim">Firple Slim</option>
           </select>
+        </div>
+        <div class="sample-config">
+          <input type="checkbox" id="bold">
+          <label for="bold" style="font-weight: bold">Bold</label>
+          <input type="checkbox" id="italic">
+          <label for="italic" style="font-style: italic">Italic</label>
         </div>
         <div class="sample-config">
           <input type="range" id="weight" min="10" max="40">
@@ -174,36 +206,36 @@ Almost before we knew it, we had left the ground.
 
     <section class="section">
       <div class="content">
-        <h2 class="title is-3" id="license">
-          <ion-icon name="school-outline"></ion-icon>
-          ライセンス
-        </h2>
-        <a href="https://github.com/negset/Firple/blob/master/LICENSE.txt" target="_blank" rel="noopener noreferrer">
-          SIL Open Font License (OFL) Version 1.1</a>
+        <h2 class="title is-3" id="download">ダウンロード</h2>
+        <p>以下のボタンからフォントをダウンロードできます。</p>
+        <a href="https://github.com/negset/Firple/releases" target="_blank" rel="noopener noreferrer">
+          <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/negset/Firple/total">
+        </a>
       </div>
     </section>
 
     <section class="section">
       <div class="content">
-        <h2 class="title is-3" id="download">
-          <ion-icon name="download-outline"></ion-icon>
-          ダウンロード
-        </h2>
-        <p>
-          <a href="https://github.com/negset/Firple/releases" target="_blank" rel="noopener noreferrer">
-            GitHub の Releases ページ</a> からフォントをダウンロードできます。
-        </p>
+        <h2 class="title is-3" id="changelog">更新履歴</h2>
+        <a href="https://github.com/negset/Firple/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">
+          CHANGELOG.md</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="content">
+        <h2 class="title is-3" id="license">ライセンス</h2>
+        <a href="https://github.com/negset/Firple/blob/master/LICENSE.txt" target="_blank" rel="noopener noreferrer">
+          SIL Open Font License (OFL) Version 1.1</a>
       </div>
     </section>
 
   </main>
 
   <footer class="footer">
-    Firple © 2021 negset
+    Firple <i class="ri-copyright-line"></i> 2021 negset
   </footer>
 
-  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <script src="js/script.js"></script>
 </body>
 

@@ -24,6 +24,36 @@
   src: url("../fonts/Firple-BoldItalic.woff2") format("woff2");
 }
 
+@font-face {
+  font-family: "Firple Slim";
+  font-weight: 400;
+  src: url("../fonts/FirpleSlim-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Firple Slim";
+  font-weight: 700;
+  src: url("../fonts/FirpleSlim-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Firple Slim";
+  font-weight: 400;
+  font-style: italic;
+  src: url("../fonts/FirpleSlim-Italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Firple Slim";
+  font-weight: 700;
+  font-style: italic;
+  src: url("../fonts/FirpleSlim-BoldItalic.woff2") format("woff2");
+}
+
+body {
+  font-family: "Firple Slim", sans-serif;
+}
+
 .navbar {
   box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
 }
@@ -37,22 +67,22 @@
   }
 }
 
-.navbar-burger ion-icon {
-  width: calc(100% - 1.4rem);
-  height: calc(100% - 1.4rem);
-  padding: 0.7rem;
+.navbar-burger::before {
+  font-family: 'remixicon' !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\EF3B";
+  font-size: 1.2rem;
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.navbar-burger ion-icon[name="close-outline"] {
-  display: none;
-}
-
-.navbar-burger.is-active ion-icon[name="close-outline"] {
-  display: inline-block;
-}
-
-.navbar-burger.is-active ion-icon[name="menu-outline"] {
-  display: none;
+.navbar-burger.is-active::before {
+  content: "\EB98";
 }
 
 .navbar-menu {
@@ -82,11 +112,58 @@
   padding-bottom: 2rem;
 }
 
-h2 ion-icon {
+.button {
+  font-weight: 700;
+}
+
+h2.title::before {
   color: #485fc7;
-  font-size: 28px;
-  margin-right: 6px;
-  vertical-align: -0.15rem;
+  font-family: 'remixicon' !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-right: 0.5em;
+}
+
+h2.title#about::before {
+  content: "\F044";
+}
+
+h2.title#spec::before {
+  content: "\F206";
+}
+
+h2.title#family::before {
+  content: "\ED8D";
+}
+
+h2.title#sample::before {
+  content: "\F0D1";
+}
+
+h2.title#download::before {
+  content: "\EC5A";
+}
+
+h2.title#changelog::before {
+  content: "\ED0E";
+}
+
+h2.title#license::before {
+  content: "\F0B7";
+}
+
+h3.title {
+  color: #485fc7;
+}
+
+h3.title::before {
+  font-family: 'remixicon' !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-right: 0.5em;
+  content: "\EB7B";
 }
 
 strong {
@@ -102,13 +179,15 @@ strong {
 }
 
 .sample-config > label {
-  margin-right: 0.5rem;
+  margin-right: 1rem;
 }
 
-.sample-text {
+.sample-text.textarea {
   font-family: "Firple";
   padding: 1rem;
   font-size: 20px;
   line-height: 1.5em;
-  height: 240px !important;
+  height: 240px;
+  min-height: auto;
+  resize: none;
 }
