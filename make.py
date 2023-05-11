@@ -111,7 +111,7 @@ def generate():
     firple = TTFont(firple_path)
     firple['OS/2'].xAvgCharWidth = int(
         fira['OS/2'].xAvgCharWidth * slim_scale)
-    firple['post'].isFixedPitch = 1                     # for macOS
+    firple['post'].isFixedPitch = 1             # for macOS
     firple.save(firple_path)
 
 
@@ -167,10 +167,10 @@ def italicize():
     firple = TTFont(firple_path)
     italic = TTFont(italic_path)
     italic['OS/2'].xAvgCharWidth = firple['OS/2'].xAvgCharWidth
-    italic['post'].isFixedPitch = 1                     # for macOS
-    italic['OS/2'].fsSelection &= 0b1111111110111111    # disable REGULAR flag
-    italic['OS/2'].fsSelection |= 0b0000000000000001    # enable ITALIC flag
-    italic['head'].macStyle |= 0b0000000000000010       # enable Italic flag
+    italic['post'].isFixedPitch = 1             # for macOS
+    italic['OS/2'].fsSelection &= ~(1 << 6)     # clear REGULAR bit
+    italic['OS/2'].fsSelection |= (1 << 0)      # set ITALIC bit
+    italic['head'].macStyle |= (1 << 1)         # set Italic bit
     italic.save(italic_path)
 
 
