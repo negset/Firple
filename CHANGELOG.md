@@ -1,3 +1,12 @@
+## Version 4.000
+
+- Nerd Fonts 対応
+- 生成スクリプトを更新
+- ベースフォントのダウンロード用スクリプトを追加
+- ベースフォント
+  - Fira Code Version 6.002
+  - IBM Plex Sans JP (TrueType/hinted) Version 1.001
+
 ## Version 3.000
 
 - Slim ファミリを追加
@@ -17,7 +26,7 @@
 
 - イタリック体を追加
 - macOS で等幅フォントとして認識されない問題の修正
-- FiraCode のバージョンを更新
+- Fira Code のバージョンを更新
 - 生成スクリプトを更新
 - ベースフォント
   - Fira Code v6.2
@@ -25,7 +34,7 @@
 
 ## Version 1.300 (2021/12/04)
 
-- FiraCode のバージョンを更新
+- Fira Code のバージョンを更新
 - 生成スクリプトを更新
 - ベースフォント
   - Fira Code v6.1

@@ -21,19 +21,25 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
 - 2 種のウェイト
 
-  Regular と Bold の 2 ウェイトがあります。
+  Regular と Bold の 2 ウェイトを提供しています。
 
 - 独自のイタリック体
 
-  Fira Code には無い独自の字形を持ったイタリック体があります。
+  Fira Code には無い Firple 独自の字形を持ったイタリック体を提供しています。
 
 - Slim サブファミリー
 
   Fira Code の字幅を縮小した Slim サブファミリーを提供しています。
 
+- Nerd Fonts 対応
+
+  [Nerd Fonts](https://www.nerdfonts.com/) の多彩なグリフを含んでいます。
+
 ## フォントファミリー
 
 ### Firple
+
+Fira Code の英字をそのまま利用できます。日本語文字に字間のゆとりが生まれます。
 
 |フォント名         |説明                                     |
 |:------------------|:----------------------------------------|
@@ -43,6 +49,8 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 |Firple Bold Italic |Firple Bold のイタリック体               |
 
 ### Firple Slim
+
+Fira Code の字幅を縮小しています。一度に多くの文字を表示でき、日本語文字が自然な字間になります。
 
 |フォント名             |説明                           |
 |:----------------------|:------------------------------|
@@ -61,26 +69,19 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
 ## ビルド
 
-### 必要なもの
+- 環境
 
-- FontForge および fontTools
+  Ubuntu 20.04.6 LTS で確認
 
-```
-$ sudo apt install fontforge
-$ sudo apt install fonttools
-```
+- 必要パッケージ
 
-- 元となるフォントファイル
+  ```sh
+  $ sudo apt install fontforge python3-fontforge fonttools
+  ```
 
-```
-src/FiraCode-Bold.ttf
-src/FiraCode-Regular.ttf
-src/IBMPlexSansJP-Bold.ttf
-src/IBMPlexSansJP-Text.ttf
-```
+- ビルドコマンド
 
-### コマンド
-
-```
-$ ./run.sh
-```
+  ```sh
+  $ make setup
+  $ make all
+  ```
