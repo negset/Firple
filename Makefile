@@ -1,11 +1,8 @@
+all: build-image build-font
 
-.DEFAULT_GOAL := all
+build-image:
+	docker build -t font-builder:latest .
 
-setup: downloader.py
-	./downloader.py --all
+build-font:
+	docker run --rm -v ${PWD}:/opt font-builder:latest /bin/bash -c "rm -rf ./src ./out && ./downloader.py && ./firple.py"
 
-all: firple.py
-	fontforge -quiet -script ./firple.py --all
-
-clean:
-	rm -rf __pycache__/ FontPatcher/ out/* tmp/ && find src/* | grep -v Firple | xargs rm -rf
