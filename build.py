@@ -32,7 +32,7 @@ class ErrorSupressor:
 
 
 def main():
-    print('Firple Generator v' + VERSION)
+    print(FAMILY + ' Generator v' + VERSION)
 
     if not files_exist([NERD_PATCHER]):
         print(f'Error: missing required files for nerd fonts patching', file=sys.stderr)
@@ -67,7 +67,7 @@ def generate() -> bool:
     name_without_space = family.replace(' ', '')
     frcd_path = SRC_FILES[weight][0]
     plex_path = SRC_FILES[weight][1]
-    out_path = f'{TMP_DIR}/{name_without_space.replace("Firple", "Tmp")}.ttf'
+    out_path = f'{TMP_DIR}/{name_without_space.replace(FAMILY, "Tmp")}.ttf'
 
     # generation process
     print(f'\n[{name}]')
@@ -153,7 +153,7 @@ def generate_upright(name: str, weight: str, frcd_path: str, plex_path: str, out
         glyph.width = width
 
     print('Generating temporary file...')
-    frcd.fullname = name.replace('Firple', 'Tmp')
+    frcd.fullname = name.replace(FAMILY, 'Tmp')
     frcd.weight = weight
     frcd.copyright = f'{COPYRIGHT}\n{frcd.copyright}\n{plex.copyright}'
     frcd.os2_unicoderanges = tuple(
