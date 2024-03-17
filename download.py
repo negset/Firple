@@ -11,72 +11,54 @@ def main():
     if not os.path.exists(SRC_DIR):
         os.makedirs(SRC_DIR)
 
-    parser = argparse.ArgumentParser(
-        description=f'File downloader for Firple Generator')
-    parser.add_argument('-a', '--all', action='store_true',
-                        help='download all files (default)')
-    parser.add_argument('--fira-code', action='store_true',
-                        help='download fira code')
-    parser.add_argument('--plex-sans', action='store_true',
-                        help='download plex sans')
-    parser.add_argument('--font-patcher', action='store_true',
-                        help='download nerd font patcher')
-    args = parser.parse_args()
+    print("Download FiraCode")
+    download_fira_code()
 
-    if not (args.fira_code or args.plex_sans or args.font_patcher):
-        args.all = True
+    print("Download IBM Plex Sans JP")
+    download_plex_sans()
 
-    if args.all or args.fira_code:
-        print("Fira Code...")
-        fira_code()
-    if args.all or args.plex_sans:
-        print("Plex Sans...")
-        plex_sans()
-    if args.all or args.font_patcher:
-        print("Font Patcher...")
-        font_patcher()
+    print("Download NerdFont Patcher")
+    download_font_patcher()
 
 
-def fira_code():
-    # get version number
-    with urllib.request.urlopen(FRCD_URL.rsplit('/', 2)[0]) as res:
-        url = res.geturl()
-    version = url.split('/')[-1]
+def download_fira_code():
+    dl_path = '/tmp/FiraCode.zip'
+    ttf_path = 'ttf/'
     # download
-    path = '/tmp/FiraCode.zip'
-    urllib.request.urlretrieve(FRCD_URL.format(version), path)
-    with zipfile.ZipFile(path) as zf:
-        for weight in WEIGHTS:
-            outpath = SRC_FILES[weight][0]
+    urllib.request.urlretrieve(FRCD_URL, dl_path)
+    with zipfile.ZipFile(dl_path) as zf:
+        for weight in FRCD_WEIGHTS:
+            outpath = SRC_DIR + '/' + FRCD_NAME.format(weight)
             basename = os.path.basename(outpath)
             # extract
-            zf.extract('ttf/' + basename, '/tmp')
+            zf.extract(ttf_path + basename, '/tmp')
             # move
-            shutil.move('/tmp/ttf/' + basename, outpath)
+            shutil.move('/tmp/' + ttf_path + basename, outpath)
 
 
-def plex_sans():
+def download_plex_sans():
+    dl_path = '/tmp/PlexSans.zip'
+    ttf_path = 'IBM-Plex-Sans-JP/fonts/complete/ttf/hinted/'
     # download
-    path = '/tmp/PlexSans.zip'
-    urllib.request.urlretrieve(PLEX_URL, path)
+    urllib.request.urlretrieve(PLEX_URL, dl_path)
     # extract
-    with zipfile.ZipFile(path) as zf:
-        for weight in WEIGHTS:
-            outpath = SRC_FILES[weight][1]
+    with zipfile.ZipFile(dl_path) as zf:
+        for weight in PLEX_WEIGHTS:
+            outpath = SRC_DIR + '/' + PLEX_NAME.format(weight)
             basename = os.path.basename(outpath)
             # extract
-            zf.extract('TrueType/IBM-Plex-Sans-JP/hinted/' + basename, '/tmp')
+            zf.extract(ttf_path + basename, '/tmp')
             # move
-            shutil.move('/tmp/TrueType/IBM-Plex-Sans-JP/hinted/' + basename, outpath)
+            shutil.move('/tmp/' + ttf_path + basename, outpath)
 
 
-def font_patcher():
+def download_font_patcher():
     # download
     path = '/tmp/FontPacher.zip'
     urllib.request.urlretrieve(NERD_URL, path)
     # extract
     with zipfile.ZipFile(path) as zf:
-        zf.extractall('./FontPatcher')
+        zf.extractall(NERD_DIR)
 
 
 if __name__ == '__main__':
