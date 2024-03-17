@@ -10,24 +10,8 @@ import subprocess
 import sys
 from fontTools.ttLib import TTFont
 
-SRC_DIR = './src'
-OUT_DIR = './out'
-TMP_DIR = './tmp'
-SRC_FILES = {
-    'SemiBold': [
-        SRC_DIR + '/FiraCode-SemiBold.ttf',
-        SRC_DIR + '/IBMPlexSansJP-SemiBold.ttf',
-    ]
-}
-NERD_PATCHER = './FontPatcher/font-patcher'
+from config import *
 
-VERSION = '1.000'
-COPYRIGHT = 'Copyright 2024 tbando'
-PLEX_SCALE = 1.9
-PLEX_PREFERRED_GLYPHS = ['「', '」']
-ITALIC_SKEW = 12
-ITALIC_OFFSET = -100
-SLIM_SCALE = 0.8
 
 
 class ErrorSupressor:
@@ -77,7 +61,7 @@ def files_exist(paths: list) -> bool:
 
 # def generate(slim: bool, bold: bool, italic: bool, nerd: bool) -> bool:
 def generate() -> bool:
-    family = 'FiraPlexNF2'
+    family = FAMILY
     weight = 'SemiBold'
     name = family + ' ' + weight
     name_without_space = family.replace(' ', '')

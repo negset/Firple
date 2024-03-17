@@ -5,14 +5,7 @@ import os
 import shutil
 import urllib.request
 import zipfile
-from firple import SRC_FILES
-
-FRCD_URL = 'https://github.com/tonsky/FiraCode/releases/latest/download/Fira_Code_v{}.zip'
-PLEX_URL = 'https://github.com/IBM/plex/releases/latest/download/TrueType.zip'
-NERD_URL = 'https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip'
-
-WEIGHTS = ["SemiBold"]
-SRC_DIR = './src'
+from config import *
 
 def main():
     if not os.path.exists(SRC_DIR):
