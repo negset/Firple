@@ -11,8 +11,13 @@ FRCD_URL = 'https://github.com/tonsky/FiraCode/releases/latest/download/Fira_Cod
 PLEX_URL = 'https://github.com/IBM/plex/releases/latest/download/TrueType.zip'
 NERD_URL = 'https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip'
 
+WEIGHTS = ["SemiBold"]
+SRC_DIR = './src'
 
 def main():
+    if not os.path.exists(SRC_DIR):
+        os.makedirs(SRC_DIR)
+
     parser = argparse.ArgumentParser(
         description=f'File downloader for Firple Generator')
     parser.add_argument('-a', '--all', action='store_true',
@@ -48,7 +53,7 @@ def fira_code():
     path = '/tmp/FiraCode.zip'
     urllib.request.urlretrieve(FRCD_URL.format(version), path)
     with zipfile.ZipFile(path) as zf:
-        for weight in ['Regular', 'Bold']:
+        for weight in WEIGHTS:
             outpath = SRC_FILES[weight][0]
             basename = os.path.basename(outpath)
             # extract
@@ -63,7 +68,7 @@ def plex_sans():
     urllib.request.urlretrieve(PLEX_URL, path)
     # extract
     with zipfile.ZipFile(path) as zf:
-        for weight in ['Regular', 'Bold']:
+        for weight in WEIGHTS:
             outpath = SRC_FILES[weight][1]
             basename = os.path.basename(outpath)
             # extract
