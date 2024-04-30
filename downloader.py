@@ -7,7 +7,7 @@ from tempfile import TemporaryDirectory
 from urllib import request
 from zipfile import ZipFile
 
-from firple import SRC_FILES
+from settings import SRC_FILES
 
 FRCD_URL = (
     "https://github.com/tonsky/FiraCode/releases/latest/download/Fira_Code_v{}.zip"
