@@ -6,12 +6,35 @@ import os
 import shutil
 import subprocess
 import sys
-from contextlib import redirect_stderr
+from contextlib import nullcontext
 
 import fontforge
 import psMat
 from fontTools.ttLib import TTFont
 from settings import *
+
+
+class ErrorSuppressor:
+    enable = True
+
+    def __init__(self):
+        # copy stderr
+        self.stderr_copy = os.dup(2)
+
+    def __enter__(self):
+        # replace stderr with /dev/null
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, 2)
+        os.close(devnull)
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        # restore stderr
+        os.dup2(self.stderr_copy, 2)
+
+    @classmethod
+    def suppress(cls):
+        return cls() if cls.enable else nullcontext()
 
 
 class Firple:
@@ -21,9 +44,7 @@ class Firple:
         args = parse_arguments()
 
         # set stderr_target
-        self.stderr_target = sys.stderr
-        if args.suppress_error:
-            self.stderr_target = open(os.devnull, "w", encoding="utf-8")
+        ErrorSuppressor.enable = args.suppress_error
 
         # check if nerd fonts patcher exists
         if args.nerd and not files_exist([NERD_PATCHER]):
@@ -74,10 +95,6 @@ class Firple:
         if not args.keep_tmp_files and os.path.exists(TMP_DIR):
             shutil.rmtree(TMP_DIR)
 
-        # close stderr_target
-        if args.suppress_err:
-            self.stderr_target.close()
-
     def generate(self, slim: bool, bold: bool, italic: bool, nerd: bool) -> bool:
         family = f"{FAMILY} Slim" if slim else FAMILY
         weight = "Bold" if bold else "Regular"
@@ -116,7 +133,9 @@ class Firple:
                 return False
         else:
             # generate upright
-            ok = self.generate_upright(name, slim, weight, frcd_path, plex_path, out_path)
+            ok = self.generate_upright(
+                name, slim, weight, frcd_path, plex_path, out_path
+            )
             if not ok:
                 return False
 
@@ -134,7 +153,7 @@ class Firple:
                 "-out",
                 TMP_DIR,
             ]
-            with redirect_stderr(self.stderr_target):
+            with ErrorSuppressor.suppress():
                 with subprocess.Popen(cmd, stdout=subprocess.PIPE) as proc:
                     for line in proc.stdout:
                         print("  " + line.decode(), end="")
@@ -147,7 +166,7 @@ class Firple:
             out_path = out_path.replace("-", "NerdFont-")
 
         print("Setting font parameters (1/2)...")
-        with redirect_stderr(self.stderr_target):
+        with ErrorSuppressor.suppress():
             frpl = fontforge.open(out_path)
         frpl.familyname = family
         frpl.fontname = name_without_space
@@ -194,7 +213,7 @@ class Firple:
             print(f'Error: missing required files for "{name}"', file=sys.stderr)
             return False
 
-        with redirect_stderr(self.stderr_target):
+        with ErrorSuppressor.suppress():
             frcd = fontforge.open(frcd_path)
             plex = fontforge.open(plex_path)
         w = frcd["A"].width
@@ -258,7 +277,7 @@ class Firple:
             print(f'Error: missing required files for "{name}"', file=sys.stderr)
             return False
 
-        with redirect_stderr(self.stderr_target):
+        with ErrorSuppressor.suppress():
             frpl = fontforge.open(frpl_path)
             ital = fontforge.open(ital_path)
 
