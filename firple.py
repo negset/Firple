@@ -1,40 +1,19 @@
 #!/usr/bin/env python3
 
-from argparse import ArgumentParser
+import atexit
 import math
 import os
 import shutil
 import subprocess
 import sys
+from argparse import ArgumentParser
 from contextlib import nullcontext
 
 import fontforge
 import psMat
 from fontTools.ttLib import TTFont
+
 from settings import *
-
-
-class ErrorSuppressor:
-    enable = True
-
-    def __init__(self):
-        # copy stderr
-        self.stderr_copy = os.dup(2)
-
-    def __enter__(self):
-        # replace stderr with /dev/null
-        devnull = os.open(os.devnull, os.O_WRONLY)
-        os.dup2(devnull, 2)
-        os.close(devnull)
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        # restore stderr
-        os.dup2(self.stderr_copy, 2)
-
-    @classmethod
-    def suppress(cls):
-        return cls() if cls.enable else nullcontext()
 
 
 class Firple:
@@ -43,16 +22,15 @@ class Firple:
 
         args = parse_arguments()
 
-        # set stderr_target
+        # set ErrorSuppressor
         ErrorSuppressor.enable = args.suppress_error
 
+        # call cleanup on exit
+        atexit.register(self.cleanup, args.keep_tmp_files)
+
         # check if nerd fonts patcher exists
-        if args.nerd and not files_exist([NERD_PATCHER]):
-            print(
-                "Error: missing required files for nerd fonts patching",
-                file=sys.stderr,
-            )
-            return
+        if args.nerd:
+            required("nerd fonts patching", [NERD_PATCHER])
 
         # create directories
         if not os.path.exists(OUT_DIR):
@@ -91,11 +69,12 @@ class Firple:
                 nerd=args.nerd,
             )
 
+    def cleanup(self, keep_tmp_files: bool):
         # remove tmp directory
-        if not args.keep_tmp_files and os.path.exists(TMP_DIR):
+        if not keep_tmp_files and os.path.exists(TMP_DIR):
             shutil.rmtree(TMP_DIR)
 
-    def generate(self, slim: bool, bold: bool, italic: bool, nerd: bool) -> bool:
+    def generate(self, slim: bool, bold: bool, italic: bool, nerd: bool):
         family = f"{FAMILY} Slim" if slim else FAMILY
         weight = "Bold" if bold else "Regular"
         name = (
@@ -120,24 +99,16 @@ class Firple:
             upright_tmp_path = f'{TMP_DIR}/Tmp{"Slim" if slim else ""}-{weight}.ttf'
             if not os.path.exists(upright_tmp_path):
                 # generate upright first
-                ok = self.generate_upright(
+                self.generate_upright(
                     name, slim, weight, frcd_path, plex_path, upright_tmp_path
                 )
-                if not ok:
-                    return False
             # generate italic
-            ok = self.generate_italic(
+            self.generate_italic(
                 name, slim, weight, upright_tmp_path, ital_path, out_path
             )
-            if not ok:
-                return False
         else:
             # generate upright
-            ok = self.generate_upright(
-                name, slim, weight, frcd_path, plex_path, out_path
-            )
-            if not ok:
-                return False
+            self.generate_upright(name, slim, weight, frcd_path, plex_path, out_path)
 
         if nerd:
             print("Applying nerd fonts patch...")
@@ -158,11 +129,7 @@ class Firple:
                     for line in proc.stdout:
                         print("  " + line.decode(), end="")
             if proc.returncode != 0:
-                print(
-                    f'Error: patcher did not finish successfully for "{name}"',
-                    file=sys.stderr,
-                )
-                return False
+                sys.exit(f'Error: patcher did not finish successfully for "{name}"')
             out_path = out_path.replace("-", "NerdFont-")
 
         print("Setting font parameters (1/2)...")
@@ -197,8 +164,6 @@ class Firple:
 
         print(f"Generation complete! (=> {out_path})")
 
-        return True
-
     def generate_upright(
         self,
         name: str,
@@ -207,11 +172,9 @@ class Firple:
         frcd_path: str,
         plex_path: str,
         out_path: str,
-    ) -> bool:
+    ):
         # check if src font files exist
-        if not files_exist([frcd_path, plex_path]):
-            print(f'Error: missing required files for "{name}"', file=sys.stderr)
-            return False
+        required(name, [frcd_path, plex_path])
 
         with ErrorSuppressor.suppress():
             frcd = fontforge.open(frcd_path)
@@ -261,8 +224,6 @@ class Firple:
         frcd.close()
         plex.close()
 
-        return True
-
     def generate_italic(
         self,
         name: str,
@@ -271,11 +232,9 @@ class Firple:
         frpl_path: str,
         ital_path: str,
         out_path: str,
-    ) -> bool:
+    ):
         # check if src font files exist
-        if not files_exist([frpl_path, ital_path]):
-            print(f'Error: missing required files for "{name}"', file=sys.stderr)
-            return False
+        required(name, [frpl_path, ital_path])
 
         with ErrorSuppressor.suppress():
             frpl = fontforge.open(frpl_path)
@@ -332,7 +291,28 @@ class Firple:
         frpl.close()
         ital.close()
 
-        return True
+
+class ErrorSuppressor:
+    enable = False
+
+    def __init__(self):
+        # copy stderr
+        self.stderr_copy = os.dup(2)
+
+    def __enter__(self):
+        # replace stderr with null device
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, 2)
+        os.close(devnull)
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        # restore stderr
+        os.dup2(self.stderr_copy, 2)
+
+    @classmethod
+    def suppress(cls):
+        return cls() if cls.enable else nullcontext()
 
 
 def parse_arguments():
@@ -370,13 +350,14 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def files_exist(paths: list) -> bool:
-    exist = True
+def required(obj: str, paths: list) -> None:
+    ok = True
     for path in paths:
         if not os.path.exists(path):
-            print(f'Error: file not found: "{path}"', file=sys.stderr)
-            exist = False
-    return exist
+            print(f'file not found: "{path}"', file=sys.stderr)
+            ok = False
+    if not ok:
+        sys.exit(f'Error: missing required files for "{obj}"')
 
 
 if __name__ == "__main__":
