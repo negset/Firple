@@ -17,64 +17,11 @@ from settings import *
 
 
 class Firple:
-    def __init__(self):
-        print(f"{FAMILY} Generator v{VERSION}")
-
-        args = parse_arguments()
-
-        # set ErrorSuppressor
-        ErrorSuppressor.enable = args.suppress_error
-
-        # call cleanup on exit
-        atexit.register(self.cleanup, args.keep_tmp_files)
-
+    def generate(self, slim: bool, bold: bool, italic: bool, nerd: bool):
         # check if nerd fonts patcher exists
-        if args.nerd:
+        if nerd:
             required("nerd fonts patching", [NERD_PATCHER])
 
-        # create directories
-        if not os.path.exists(OUT_DIR):
-            os.makedirs(OUT_DIR)
-        if not os.path.exists(TMP_DIR):
-            os.makedirs(TMP_DIR)
-
-        if args.all or args.single is None:
-            # generate all variants, weights and styles
-            self.generate(
-                slim=False, bold=False, italic=False, nerd=args.nerd
-            )  # Regular
-            self.generate(slim=False, bold=False, italic=True, nerd=args.nerd)  # Italic
-            self.generate(slim=False, bold=True, italic=False, nerd=args.nerd)  # Bold
-            self.generate(
-                slim=False, bold=True, italic=True, nerd=args.nerd
-            )  # Bold Italic
-            self.generate(
-                slim=True, bold=False, italic=False, nerd=args.nerd
-            )  # Slim Regular
-            self.generate(
-                slim=True, bold=False, italic=True, nerd=args.nerd
-            )  # Slim Italic
-            self.generate(
-                slim=True, bold=True, italic=False, nerd=args.nerd
-            )  # Slim Bold
-            self.generate(
-                slim=True, bold=True, italic=True, nerd=args.nerd
-            )  # Slim Bold Italic
-        else:
-            # generate a single font file with specified styles
-            self.generate(
-                slim="slim" in args.single,
-                bold="bold" in args.single,
-                italic="italic" in args.single,
-                nerd=args.nerd,
-            )
-
-    def cleanup(self, keep_tmp_files: bool):
-        # remove tmp directory
-        if not keep_tmp_files and os.path.exists(TMP_DIR):
-            shutil.rmtree(TMP_DIR)
-
-    def generate(self, slim: bool, bold: bool, italic: bool, nerd: bool):
         family = f"{FAMILY} Slim" if slim else FAMILY
         weight = "Bold" if bold else "Regular"
         name = (
@@ -360,5 +307,52 @@ def required(obj: str, paths: list) -> None:
         sys.exit(f'Error: missing required files for "{obj}"')
 
 
+def cleanup(keep_tmp_files: bool):
+    # remove tmp directory
+    if not keep_tmp_files and os.path.exists(TMP_DIR):
+        shutil.rmtree(TMP_DIR)
+
+
 if __name__ == "__main__":
-    Firple()
+    print(f"{FAMILY} v{VERSION}")
+
+    args = parse_arguments()
+
+    # set ErrorSuppressor
+    ErrorSuppressor.enable = args.suppress_error
+
+    # create directories
+    os.makedirs(OUT_DIR, exist_ok=True)
+    os.makedirs(TMP_DIR, exist_ok=True)
+
+    # call cleanup on exit
+    atexit.register(cleanup, args.keep_tmp_files)
+
+    firple = Firple()
+
+    if args.all or args.single is None:
+        # generate all variants, weights and styles
+        firple.generate(slim=False, bold=False, italic=False, nerd=args.nerd)  # Regular
+        firple.generate(slim=False, bold=False, italic=True, nerd=args.nerd)  # Italic
+        firple.generate(slim=False, bold=True, italic=False, nerd=args.nerd)  # Bold
+        firple.generate(
+            slim=False, bold=True, italic=True, nerd=args.nerd
+        )  # Bold Italic
+        firple.generate(
+            slim=True, bold=False, italic=False, nerd=args.nerd
+        )  # Slim Regular
+        firple.generate(
+            slim=True, bold=False, italic=True, nerd=args.nerd
+        )  # Slim Italic
+        firple.generate(slim=True, bold=True, italic=False, nerd=args.nerd)  # Slim Bold
+        firple.generate(
+            slim=True, bold=True, italic=True, nerd=args.nerd
+        )  # Slim Bold Italic
+    else:
+        # generate a single font file with specified styles
+        firple.generate(
+            slim="slim" in args.single,
+            bold="bold" in args.single,
+            italic="italic" in args.single,
+            nerd=args.nerd,
+        )
