@@ -13,6 +13,11 @@ SRC_FILES = {
         f"{SRC_DIR}/Firple-BoldItalic.ttf",
     ],
 }
+ITALIC_GLYPHS = ["a", "b", "e", "f", "g", "k", "q"]
+ITALIC_FILES = {
+    "Regular": {g: f"{SRC_DIR}/italic/Regular/{g}.svg" for g in ITALIC_GLYPHS},
+    "Bold": {g: f"{SRC_DIR}/italic/Bold/{g}.svg" for g in ITALIC_GLYPHS},
+}
 NERD_PATCHER = "./FontPatcher/font-patcher"
 
 FAMILY = "FirpleBeta"

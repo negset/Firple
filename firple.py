@@ -238,6 +238,48 @@ class Firple:
         frpl.close()
         ital.close()
 
+    def generate_italic_(
+        self,
+        name: str,
+        slim: bool,
+        weight: str,
+        out_path: str,
+    ):
+        frcd_path = SRC_FILES[weight][0]
+        plex_path = SRC_FILES[weight][1]
+        glyph_paths = ITALIC_FILES[weight]
+
+        # check if src font files exist
+        required(name, [frcd_path, plex_path] + list(glyph_paths.values()))
+
+        with ErrorSuppressor.suppress():
+            frcd = fontforge.open(frcd_path)
+
+        w = frcd["A"].width
+        half_width = int(w * SLIM_SCALE) if slim else w
+        full_width = half_width * 2
+
+        # unlink all reference
+        frcd.selection.all()
+        frcd.unlinkReferences()
+
+        print("Importing italic glyphs...")
+        for g in ITALIC_GLYPHS:
+            frcd[g].clear()
+            frcd[g].importOutlines(glyph_paths[g])
+            frcd[g].width = half_width
+
+        print("Transforming glyphs...")
+        frcd.transform(
+            psMat.compose(
+                psMat.translate(ITALIC_OFFSET * SLIM_SCALE, 0),
+                psMat.skew(math.radians(ITALIC_SKEW)),
+            )
+        )
+
+        frcd.generate(out_path)
+        frcd.close()
+
 
 class ErrorSuppressor:
     enable = False
@@ -329,6 +371,8 @@ if __name__ == "__main__":
     atexit.register(cleanup, args.keep_tmp_files)
 
     firple = Firple()
+
+    firple.generate_italic_(f"{FAMILY} Italic", False, "Regular", "./out/test.ttf")
 
     if args.all or args.single is None:
         # generate all variants, weights and styles
