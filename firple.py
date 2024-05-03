@@ -268,8 +268,9 @@ class Firple:
             frcd[g].clear()
             frcd[g].importOutlines(glyph_paths[g])
             frcd[g].width = half_width
+            frcd.selection.select(("less",), g)
 
-        print("Transforming glyphs...")
+        print("Skewing glyphs...")
         frcd.transform(
             psMat.compose(
                 psMat.translate(ITALIC_OFFSET * SLIM_SCALE, 0),
@@ -279,6 +280,18 @@ class Firple:
 
         frcd.generate(out_path)
         frcd.close()
+
+        print("Hinting glyphs...")
+        cmd = [
+            "ttfautohint",
+            "--no-info",
+            "--ignore-restrictions",
+            out_path,
+            f"{out_path}.hinted",
+        ]
+        cp = subprocess.run(cmd, check=False)
+        if cp.returncode != 0:
+            sys.exit(f'Error: ttfautohint did not finish successfully for "{name}"')
 
 
 class ErrorSuppressor:

@@ -71,12 +71,12 @@ Fira Code の字幅を縮小しています。一度に多くの文字を表示�
 
 - 環境
 
-  Ubuntu 20.04.6 LTS で確認
+  Ubuntu 22.04.3 LTS で確認
 
 - 必要パッケージ
 
   ```sh
-  $ sudo apt install fontforge python3-fontforge fonttools
+  $ sudo apt install fontforge python3-fontforge fonttools ttfautohint
   ```
 
 - ビルドコマンド
