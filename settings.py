@@ -5,12 +5,10 @@ SRC_FILES = {
     "Regular": [
         f"{SRC_DIR}/FiraCode-Regular.ttf",
         f"{SRC_DIR}/IBMPlexSansJP-Text.ttf",
-        f"{SRC_DIR}/Firple-Italic.ttf",
     ],
     "Bold": [
         f"{SRC_DIR}/FiraCode-Bold.ttf",
         f"{SRC_DIR}/IBMPlexSansJP-Bold.ttf",
-        f"{SRC_DIR}/Firple-BoldItalic.ttf",
     ],
 }
 ITALIC_GLYPHS = ["a", "b", "e", "f", "g", "k", "q"]
