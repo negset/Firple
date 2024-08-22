@@ -9,12 +9,10 @@ from zipfile import ZipFile
 
 from settings import SRC_FILES
 
-FRCD_URL = (
-    "https://github.com/tonsky/FiraCode/releases/latest/download/Fira_Code_v{}.zip"
-)
-PLEX_URL = "https://github.com/IBM/plex/releases/latest/download/TrueType.zip"
+FRCD_URL = "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
+PLEX_URL = "https://github.com/IBM/plex/archive/refs/tags/v6.4.1.zip"
 NERD_URL = (
-    "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip"
+    "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/FontPatcher.zip"
 )
 
 
@@ -45,14 +43,10 @@ def main():
 
 
 def fira_code():
-    # get version number
-    with request.urlopen(FRCD_URL.rsplit("/", 2)[0]) as res:
-        url = res.geturl()
-    version = url.split("/")[-1]
     with TemporaryDirectory() as tmpdir:
         # download
         path = f"{tmpdir}/FiraCode.zip"
-        request.urlretrieve(FRCD_URL.format(version), path)
+        request.urlretrieve(FRCD_URL, path)
         # extract
         with ZipFile(path) as zf:
             for weight in ["Regular", "Bold"]:
@@ -72,7 +66,10 @@ def plex_sans():
             for weight in ["Regular", "Bold"]:
                 outpath = SRC_FILES[weight][1]
                 name = basename(outpath)
-                tmppath = zf.extract(f"TrueType/IBM-Plex-Sans-JP/hinted/{name}", tmpdir)
+                tmppath = zf.extract(
+                    f"plex-6.4.1/IBM-Plex-Sans-JP/fonts/complete/ttf/hinted/{name}",
+                    tmpdir,
+                )
                 move(tmppath, outpath)
 
 
