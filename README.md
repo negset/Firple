@@ -1,6 +1,7 @@
 # プログラミング向けフォント Firple
 
-Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans JP](https://github.com/IBM/plex) を合成したプログラミング向けフォントです。
+Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans JP](https://github.com/IBM/plex) を
+合成したプログラミング向けフォントです。
 
 ![Firple Regular サンプル](https://github.com/negset/Firple/raw/images/sample.png)
 
@@ -9,7 +10,7 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 - 豊富なグリフ
 
   Fira Code が持つグリフを全てそのまま使用できます。  
-  また日本語文字などは、IBM Plex Sans JP のグリフで補っています。
+  加えて、日本語文字や一部記号を IBM Plex Sans JP のグリフで補っています。
 
 - 字幅を 1:2 に調整
 
@@ -25,7 +26,7 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
 - 独自のイタリック体
 
-  Fira Code には無い Firple 独自の字形を持ったイタリック体を提供しています。
+  Fira Code には無い、Firple 独自の字形を持ったイタリック体を提供しています。
 
 - Slim サブファミリー
 
@@ -39,7 +40,7 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
 ### Firple
 
-Fira Code の英字をそのまま利用できます。日本語文字に字間のゆとりが生まれます。
+Fira Code の英字をそのまま利用できます。日本語の文字に字間のゆとりが生まれます。
 
 |フォント名         |説明                                     |
 |:------------------|:----------------------------------------|
@@ -59,13 +60,17 @@ Fira Code の字幅を縮小しています。一度に多くの文字を表示�
 |Firple Slim Bold       |Firple Bold の字幅縮小版       |
 |Firple Slim Bold Italic|Firple Bold Italic の字幅縮小版|
 
-## ライセンス
+## サンプル
 
-[SIL Open Font License (OFL) Version 1.1](https://github.com/negset/Firple/blob/master/LICENSE.txt)
+[こちら](https://negset.com/Firple/#sample) で任意のテキストの表示を確認できます。
 
 ## ダウンロード
 
-[Releases ページ](https://github.com/negset/Firple/releases) から入手できます。
+[Releases](https://github.com/negset/Firple/releases) から入手できます。
+
+## ライセンス
+
+[SIL Open Font License (OFL) Version 1.1](https://github.com/negset/Firple/blob/master/LICENSE.txt)
 
 ## ビルド
 
