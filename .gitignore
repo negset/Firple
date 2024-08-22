@@ -1,5 +1,4 @@
 __pycache__/
-src/*
-out/*
+src/*.ttf
+out/
 FontPatcher/
-!src/Firple-*Italic.ttf
