@@ -29,30 +29,22 @@ class Firple:
             + (" " + weight if bold or not italic else "")
             + (" Italic" if italic else "")
         )
-        name_wo_spaces = (
+        name_no_spaces = (
             family.replace(" ", "")
             + "-"
             + (weight if bold or not italic else "")
             + ("Italic" if italic else "")
         )
-        frcd_path = SRC_FILES[weight][0]
-        plex_path = SRC_FILES[weight][1]
-        out_path = f'{TMP_DIR}/{name_wo_spaces.replace(FAMILY, "Tmp")}.ttf'
+        tmp_path = f'{TMP_DIR}/{name_no_spaces.replace(FAMILY, "Tmp")}.ttf'
 
         # generation process
         print(f"\n[{name}]")
         if italic:
-            upright_tmp_path = f'{TMP_DIR}/Tmp{"Slim" if slim else ""}-{weight}.ttf'
-            if not os.path.exists(upright_tmp_path):
-                # generate upright first
-                self.generate_upright(
-                    name, slim, weight, frcd_path, plex_path, upright_tmp_path
-                )
             # generate italic
-            self.generate_italic(name, slim, weight, out_path)
+            self.generate_italic(name, slim, weight, tmp_path)
         else:
             # generate upright
-            self.generate_upright(name, slim, weight, frcd_path, plex_path, out_path)
+            self.generate_upright(name, slim, weight, tmp_path)
 
         if nerd:
             print("Applying nerd fonts patch...")
@@ -61,7 +53,7 @@ class Firple:
                 "-quiet",
                 "-script",
                 NERD_PATCHER,
-                out_path,
+                tmp_path,
                 "--quiet",
                 "--complete",
                 "--careful",
@@ -74,24 +66,24 @@ class Firple:
                         print("  " + line.decode(), end="")
             if proc.returncode != 0:
                 sys.exit(f'Error: patcher did not finish successfully for "{name}"')
-            out_path = out_path.replace("-", "NerdFont-")
+            tmp_path = tmp_path.replace("-", "NerdFont-")
 
         print("Setting font parameters (1/2)...")
         with ErrorSuppressor.suppress():
-            frpl = fontforge.open(out_path)
+            frpl = fontforge.open(tmp_path)
         frpl.familyname = family
-        frpl.fontname = name_wo_spaces
+        frpl.fontname = name_no_spaces
         frpl.fullname = name
         frpl.version = VERSION
         frpl.sfntRevision = float(VERSION)
-        frpl.appendSFNTName("English (US)", "UniqueID", f"{VERSION};{name_wo_spaces}")
+        frpl.appendSFNTName("English (US)", "UniqueID", f"{VERSION};{name_no_spaces}")
         frpl.appendSFNTName("English (US)", "Version", f"Version {VERSION}")
-        frpl.generate(out_path)
+        frpl.generate(tmp_path)
         frpl.close()
 
         print("Setting font parameters (2/2)...")
-        frcd = TTFont(frcd_path)
-        frpl = TTFont(out_path)
+        frcd = TTFont(SRC_FILES[weight][0])
+        frpl = TTFont(tmp_path)
         w = frcd["OS/2"].xAvgCharWidth
         frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if slim else w
         frpl["post"].isFixedPitch = 1  # for macOS
@@ -99,7 +91,7 @@ class Firple:
             frpl["OS/2"].fsSelection &= ~(1 << 6)  # clear REGULAR bit
             frpl["OS/2"].fsSelection |= 1 << 0  # set ITALIC bit
             frpl["head"].macStyle |= 1 << 1  # set Italic bit
-        out_path = f"{OUT_DIR}/{name_wo_spaces}.ttf"
+        out_path = f"{OUT_DIR}/{name_no_spaces}.ttf"
         frpl.save(out_path)
         frcd.close()
         frpl.close()
@@ -111,10 +103,11 @@ class Firple:
         name: str,
         slim: bool,
         weight: str,
-        frcd_path: str,
-        plex_path: str,
         out_path: str,
     ):
+        frcd_path = SRC_FILES[weight][0]
+        plex_path = SRC_FILES[weight][1]
+
         # check if src font files exist
         required(name, [frcd_path, plex_path])
 
@@ -134,10 +127,11 @@ class Firple:
         plex.selection.none()
         frcd.selection.none()
         for i in range(sys.maxunicode + 1):
-            if i in plex and not i in frcd or chr(i) in PLEX_PREFERRED_GLYPHS:
+            is_plex_preferred = chr(i) in PLEX_PREFERRED_GLYPHS
+            if is_plex_preferred or (i in plex and i not in frcd):
                 plex.selection.select(("more",), i)
                 frcd.selection.select(("more",), i)
-            if chr(i) in PLEX_PREFERRED_GLYPHS:
+            if is_plex_preferred:
                 frcd[i].unlinkThisGlyph()
         plex.copy()
         frcd.paste()
@@ -148,7 +142,10 @@ class Firple:
             width = full_width if scaled > half_width else half_width
             offset = (width - scaled) / 2
             glyph.transform(
-                psMat.compose(psMat.scale(PLEX_SCALE), psMat.translate(offset, 0))
+                psMat.compose(
+                    psMat.scale(PLEX_SCALE),
+                    psMat.translate(offset, 0),
+                )
             )
             glyph.width = width
 
@@ -166,74 +163,6 @@ class Firple:
         frcd.close()
         plex.close()
 
-    def generate_italic_old(
-        self,
-        name: str,
-        slim: bool,
-        weight: str,
-        frpl_path: str,
-        ital_path: str,
-        out_path: str,
-    ):
-        # check if src font files exist
-        required(name, [frpl_path, ital_path])
-
-        with ErrorSuppressor.suppress():
-            frpl = fontforge.open(frpl_path)
-            ital = fontforge.open(ital_path)
-
-        if slim:
-            print("Condensing glyphs...")
-            ital.selection.all()
-            ital.transform(
-                psMat.compose(
-                    psMat.scale(SLIM_SCALE, 1),
-                    psMat.skew(
-                        math.atan(
-                            (1 - SLIM_SCALE) * math.tan(math.radians(ITALIC_SKEW))
-                        )
-                    ),
-                )
-            )
-            for glyph in ital.glyphs():
-                glyph.width = int(glyph.width * SLIM_SCALE)
-
-        print("Transforming glyphs...")
-        frpl.selection.all()
-        frpl.unlinkReferences()
-        frpl.transform(
-            psMat.compose(
-                psMat.translate(ITALIC_OFFSET * SLIM_SCALE, 0),
-                psMat.skew(math.radians(ITALIC_SKEW)),
-            )
-        )
-
-        print("Copying glyphs...")
-        # ital.selection.none()
-        # frpl.selection.none()
-        # for i in range(sys.maxunicode + 1):
-        #     if i in ital and i in frpl:
-        #         ital.selection.select(("more",), i)
-        #         frpl.selection.select(("more",), i)
-        # ital.copy()
-        # frpl.paste()
-        ital.selection.none()
-        frpl.selection.none()
-        for i in range(sys.maxunicode + 1):
-            if i in ital and i in frpl:
-                frpl.selection.select(("more",), i)
-        frpl.clear()
-        frpl.mergeFonts(ital)
-
-        print("Generating temporary file...")
-        frpl.fullname = name.replace(FAMILY, "Tmp")
-        frpl.italicangle = -ITALIC_SKEW
-        if not weight == "Regular":
-            frpl.appendSFNTName("English (US)", "SubFamily", f"{weight} Italic")
-        frpl.generate(out_path)
-        frpl.close()
-        ital.close()
-
     def generate_italic(
         self,
         name: str,
@@ -246,14 +175,11 @@ class Firple:
         glyph_paths = ITALIC_FILES[weight]
 
         # check if src font files exist
-        required(name, [frcd_path, plex_path] + list(glyph_paths.values()))
+        required(name, [frcd_path, plex_path])
+        required(name, list(glyph_paths.values()))
 
         with ErrorSuppressor.suppress():
             frcd = fontforge.open(frcd_path)
-
-        w = frcd["A"].width
-        half_width = int(w * SLIM_SCALE) if slim else w
-        full_width = half_width * 2
 
         # unlink all reference
         frcd.selection.all()
@@ -263,11 +189,11 @@ class Firple:
         for g in ITALIC_GLYPHS:
             frcd[g].clear()
             frcd[g].importOutlines(glyph_paths[g])
-            frcd[g].width = half_width
+            frcd[g].width = frcd["A"].width
             frcd.selection.select(("less",), g)
 
         print("Skewing glyphs (1/2)...")
-        # glyphs from FiraCode
+        # all glyphs except italic glyphs
         frcd.transform(
             psMat.compose(
                 psMat.translate(ITALIC_OFFSET * SLIM_SCALE, 0),
@@ -275,10 +201,9 @@ class Firple:
             )
         )
 
+        print("Hinting glyphs...")
         frcd.generate(out_path)
         frcd.close()
-
-        print("Hinting glyphs...")
         cmd = [
             "ttfautohint",
             "--no-info",
@@ -293,15 +218,24 @@ class Firple:
         with ErrorSuppressor.suppress():
             frcd = fontforge.open(f"{out_path}.hinted")
             plex = fontforge.open(plex_path)
+        w = frcd["A"].width
+        half_width = int(w * SLIM_SCALE) if slim else w
+        full_width = half_width * 2
 
-        print("Merging fonts...")
+        if slim:
+            print("Condensing glyphs...")
+            frcd.selection.all()
+            frcd.transform(psMat.scale(SLIM_SCALE, 1))
+
+        print("Copying glyphs...")
         plex.selection.none()
         frcd.selection.none()
         for i in range(sys.maxunicode + 1):
-            if i in plex and not i in frcd or chr(i) in PLEX_PREFERRED_GLYPHS:
+            is_plex_preferred = chr(i) in PLEX_PREFERRED_GLYPHS
+            if is_plex_preferred or (i in plex and i not in frcd):
                 plex.selection.select(("more",), i)
                 frcd.selection.select(("more",), i)
-            if chr(i) in PLEX_PREFERRED_GLYPHS:
+            if is_plex_preferred:
                 frcd[i].unlinkThisGlyph()
         plex.copy()
         frcd.paste()
@@ -328,6 +262,19 @@ class Firple:
             )
         )
 
+        print("Generating temporary file...")
+        frcd.fullname = name.replace(FAMILY, "Tmp")
+        frcd.weight = weight
+        frcd.copyright = f"{COPYRIGHT}\n{frcd.copyright}\n{plex.copyright}"
+        frcd.os2_unicoderanges = tuple(
+            a | b for a, b in zip(frcd.os2_unicoderanges, plex.os2_unicoderanges)
+        )
+        frcd.os2_codepages = tuple(
+            a | b for a, b in zip(frcd.os2_codepages, plex.os2_codepages)
+        )
+        frcd.italicangle = -ITALIC_SKEW
+        if not weight == "Regular":
+            frcd.appendSFNTName("English (US)", "SubFamily", f"{weight} Italic")
         frcd.generate(out_path)
         frcd.close()
         plex.close()
