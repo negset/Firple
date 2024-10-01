@@ -43,68 +43,6 @@ def generate(slim: bool, bold: bool, italic: bool, nerd: bool):
     print(f"Generation complete! (=> {path})")
 
 
-def apply_nerd_patch(path: str, params: dict) -> str:
-    # check if nerd fonts patcher exists
-    required("nerd fonts patching", [NERD_PATCHER])
-
-    print("Applying nerd fonts patch...")
-    cmd = [
-        "fontforge",
-        "-quiet",
-        "-script",
-        NERD_PATCHER,
-        path,
-        "--quiet",
-        "--complete",
-        "--careful",
-        "-out",
-        TMP_DIR,
-    ]
-    with ErrorSuppressor.suppress():
-        with subprocess.Popen(cmd, stdout=subprocess.PIPE) as proc:
-            for line in proc.stdout:
-                print("| " + line.decode(), end="")
-    if proc.returncode != 0:
-        sys.exit(f'Error: patcher did not finish successfully for "{params["name"]}"')
-    return path.replace("-", "NerdFont-")
-
-
-def set_font_params_1(path: str, params: dict) -> dict:
-    print("Setting font parameters (1/2)...")
-    with ErrorSuppressor.suppress():
-        frpl = fontforge.open(path)
-    frpl.familyname = params["family"]
-    frpl.fontname = params["name_no_spaces"]
-    frpl.fullname = params["name"]
-    frpl.version = VERSION
-    frpl.sfntRevision = float(VERSION)
-    frpl.appendSFNTName(
-        "English (US)", "UniqueID", f'{VERSION};{params["name_no_spaces"]}'
-    )
-    frpl.appendSFNTName("English (US)", "Version", f"Version {VERSION}")
-    frpl.generate(path)
-    frpl.close()
-    return path
-
-
-def set_font_params_2(path: str, params: dict) -> str:
-    print("Setting font parameters (2/2)...")
-    frcd = TTFont(SRC_FILES[params["weight"]][0])
-    frpl = TTFont(path)
-    w = frcd["OS/2"].xAvgCharWidth
-    frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params["slim"] else w
-    frpl["post"].isFixedPitch = 1  # for macOS
-    if params["italic"]:
-        frpl["OS/2"].fsSelection &= ~(1 << 6)  # clear REGULAR bit
-        frpl["OS/2"].fsSelection |= 1 << 0  # set ITALIC bit
-        frpl["head"].macStyle |= 1 << 1  # set Italic bit
-    out_path = f'{OUT_DIR}/{params["name_no_spaces"]}.ttf'
-    frpl.save(out_path)
-    frcd.close()
-    frpl.close()
-    return out_path
-
-
 def generate_font(params: dict) -> str:
     frcd_path = SRC_FILES[params["weight"]][0]
     plex_path = SRC_FILES[params["weight"]][1]
@@ -234,6 +172,68 @@ def generate_font(params: dict) -> str:
     frcd.close()
     plex.close()
 
+    return out_path
+
+
+def apply_nerd_patch(path: str, params: dict) -> str:
+    # check if nerd fonts patcher exists
+    required("nerd fonts patching", [NERD_PATCHER])
+
+    print("Applying nerd fonts patch...")
+    cmd = [
+        "fontforge",
+        "-quiet",
+        "-script",
+        NERD_PATCHER,
+        path,
+        "--quiet",
+        "--complete",
+        "--careful",
+        "-out",
+        TMP_DIR,
+    ]
+    with ErrorSuppressor.suppress():
+        with subprocess.Popen(cmd, stdout=subprocess.PIPE) as proc:
+            for line in proc.stdout:
+                print("| " + line.decode(), end="")
+    if proc.returncode != 0:
+        sys.exit(f'Error: patcher did not finish successfully for "{params["name"]}"')
+    return path.replace("-", "NerdFont-")
+
+
+def set_font_params_1(path: str, params: dict) -> dict:
+    print("Setting font parameters (1/2)...")
+    with ErrorSuppressor.suppress():
+        frpl = fontforge.open(path)
+    frpl.familyname = params["family"]
+    frpl.fontname = params["name_no_spaces"]
+    frpl.fullname = params["name"]
+    frpl.version = VERSION
+    frpl.sfntRevision = float(VERSION)
+    frpl.appendSFNTName(
+        "English (US)", "UniqueID", f'{VERSION};{params["name_no_spaces"]}'
+    )
+    frpl.appendSFNTName("English (US)", "Version", f"Version {VERSION}")
+    frpl.generate(path)
+    frpl.close()
+    return path
+
+
+def set_font_params_2(path: str, params: dict) -> str:
+    print("Setting font parameters (2/2)...")
+    frcd = TTFont(SRC_FILES[params["weight"]][0])
+    frpl = TTFont(path)
+    w = frcd["OS/2"].xAvgCharWidth
+    frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params["slim"] else w
+    frpl["post"].isFixedPitch = 1  # for macOS
+    if params["italic"]:
+        frpl["OS/2"].fsSelection &= ~(1 << 6)  # clear REGULAR bit
+        frpl["OS/2"].fsSelection |= 1 << 0  # set ITALIC bit
+        frpl["head"].macStyle |= 1 << 1  # set Italic bit
+    out_path = f'{OUT_DIR}/{params["name_no_spaces"]}.ttf'
+    frpl.save(out_path)
+    frcd.close()
+    frpl.close()
     return out_path
 
 
