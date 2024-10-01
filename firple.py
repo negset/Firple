@@ -142,6 +142,22 @@ def generate_font(params: dict) -> str:
         )
         glyph.width = width
 
+    # full-width space
+    print("Changing full-width space...")
+    lookup_name = "cv33 lookup"
+    subtable_name = "cv33 lookup subtable"
+    c = frcd.createChar(-1, "uni3000.cv33")
+    c.importOutlines(f"{SRC_DIR}/cv33/Regular/uni3000.cv33.svg")
+    c.width = full_width
+    if params["slim"]:
+        offset = full_width - frcd["A"].width
+        c.transform(psMat.translate(offset, 0))
+    frcd.addLookup(
+        lookup_name, "gsub_single", None, get_lookup_feature_script_lang("cv33")
+    )
+    frcd.addLookupSubtable(lookup_name, subtable_name)
+    frcd["uni3000"].addPosSub(subtable_name, "uni3000.cv33")
+
     if params["italic"]:
         print("Skewing glyphs (2/2)...")
         frcd.unlinkReferences()
@@ -173,6 +189,37 @@ def generate_font(params: dict) -> str:
     plex.close()
 
     return out_path
+
+
+def get_lookup_feature_script_lang(name: str) -> tuple:
+    return (
+        (
+            name,
+            (
+                ("DFLT", ("dflt",)),
+                ("cyrl", ("dflt",)),
+                ("grek", ("dflt",)),
+                (
+                    "latn",
+                    (
+                        "AFK ",
+                        "AZE ",
+                        "CAT ",
+                        "CRT ",
+                        "KAZ ",
+                        "MOL ",
+                        "PLK ",
+                        "ROM ",
+                        "TAT ",
+                        "TRK ",
+                        "dflt",
+                    ),
+                ),
+                ("zinh", ("dflt",)),
+                ("zyyy", ("dflt",)),
+            ),
+        ),
+    )
 
 
 def apply_nerd_patch(path: str, params: dict) -> str:
