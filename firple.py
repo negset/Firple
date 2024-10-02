@@ -65,11 +65,11 @@ def generate_font(params: dict) -> str:
         frcd.unlinkReferences()
 
         print("Importing italic glyphs...")
-        for g in ITALIC_GLYPHS:
-            frcd[g].clear()
-            frcd[g].importOutlines(glyph_paths[g])
-            frcd[g].width = frcd["A"].width
-            frcd.selection.select(("less",), g)
+        for c in ITALIC_CHARS:
+            frcd[c].clear()
+            frcd[c].importOutlines(glyph_paths[c])
+            frcd[c].width = frcd["A"].width
+            frcd.selection.select(("less",), c)
 
         print("Skewing glyphs (1/2)...")
         # all glyphs except italic glyphs
@@ -142,16 +142,16 @@ def generate_font(params: dict) -> str:
         )
         glyph.width = width
 
-    # full-width space
     print("Changing full-width space...")
     lookup_name = "cv33 lookup"
     subtable_name = "cv33 lookup subtable"
-    c = frcd.createChar(-1, "uni3000.cv33")
-    c.importOutlines(f"{SRC_DIR}/cv33/Regular/uni3000.cv33.svg")
-    c.width = full_width
+    g = frcd.createChar(-1, "uni3000.cv33")
+    g.importOutlines(f'{SRC_DIR}/cv33/{params["weight"]}/uni3000.cv33.svg')
+    g.width = full_width
     if params["slim"]:
         offset = full_width - frcd["A"].width
-        c.transform(psMat.translate(offset, 0))
+        g.transform(psMat.translate(offset, 0))
+    frcd.selection.select(("more",), g)
     frcd.addLookup(
         lookup_name, "gsub_single", None, get_lookup_feature_script_lang("cv33")
     )
