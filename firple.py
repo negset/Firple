@@ -52,7 +52,9 @@ def generate_font(params: dict) -> str:
     required(params["name"], [frcd_path, plex_path])
 
     if params["italic"]:
-        glyph_paths = ITALIC_FILES[params["weight"]]
+        glyph_paths = {
+            c: f'{SRC_DIR}/italic/{params["weight"]}/{c}.svg' for c in ITALIC_CHARS
+        }
 
         # check if glyph files exist
         required(params["name"], list(glyph_paths.values()))
@@ -100,9 +102,6 @@ def generate_font(params: dict) -> str:
     with ErrorSuppressor.suppress():
         frcd = fontforge.open(frcd_path)
         plex = fontforge.open(plex_path)
-    w = frcd["A"].width
-    half_width = int(w * SLIM_SCALE) if params["slim"] else w
-    full_width = half_width * 2
 
     if params["slim"]:
         print("Condensing glyphs...")
@@ -130,6 +129,9 @@ def generate_font(params: dict) -> str:
     frcd.paste()
 
     print("Transforming glyphs...")
+    w = frcd["A"].width
+    half_width = int(w * SLIM_SCALE) if params["slim"] else w
+    full_width = half_width * 2
     for glyph in frcd.selection.byGlyphs:
         scaled = glyph.width * PLEX_SCALE
         width = full_width if scaled > half_width else half_width
@@ -142,21 +144,7 @@ def generate_font(params: dict) -> str:
         )
         glyph.width = width
 
-    print("Changing full-width space...")
-    lookup_name = "cv33 lookup"
-    subtable_name = "cv33 lookup subtable"
-    g = frcd.createChar(-1, "uni3000.cv33")
-    g.importOutlines(f'{SRC_DIR}/cv33/{params["weight"]}/uni3000.cv33.svg')
-    g.width = full_width
-    if params["slim"]:
-        offset = full_width - frcd["A"].width
-        g.transform(psMat.translate(offset, 0))
-    frcd.selection.select(("more",), g)
-    frcd.addLookup(
-        lookup_name, "gsub_single", None, get_lookup_feature_script_lang("cv33")
-    )
-    frcd.addLookupSubtable(lookup_name, subtable_name)
-    frcd["uni3000"].addPosSub(subtable_name, "uni3000.cv33")
+    create_lookup("cv33", CV33_CHARS, frcd, params)
 
     if params["italic"]:
         print("Skewing glyphs (2/2)...")
@@ -191,8 +179,17 @@ def generate_font(params: dict) -> str:
     return out_path
 
 
-def get_lookup_feature_script_lang(name: str) -> tuple:
-    return (
+def create_lookup(name: str, chars: list, font: fontforge.font, params: dict):
+    print(f"Creating {name} lookup...")
+    glyph_paths = {
+        c: f'{SRC_DIR}/{name}/{params["weight"]}/{c}.{name}.svg' for c in chars
+    }
+    # check if glyph files exist
+    required(params["name"], list(glyph_paths.values()))
+
+    lookup_name = f"{name} lookup"
+    subtable_name = f"{name} lookup subtable"
+    feature_script_lang = (
         (
             name,
             (
@@ -220,6 +217,20 @@ def get_lookup_feature_script_lang(name: str) -> tuple:
             ),
         ),
     )
+    font.addLookup(lookup_name, "gsub_single", None, feature_script_lang)
+    font.addLookupSubtable(lookup_name, subtable_name)
+
+    for c in chars:
+        g = font.createChar(-1, f"{c}.{name}")
+        g.importOutlines(f'{SRC_DIR}/{name}/{params["weight"]}/{c}.{name}.svg')
+        if params["slim"]:
+            g.width = int(2 * font["A"].width * SLIM_SCALE)
+            offset = g.width * (SLIM_SCALE - 1)
+            g.transform(psMat.translate(offset, 0))
+        else:
+            g.width = 2 * font["A"].width
+        font.selection.select(("more",), g)
+        font[c].addPosSub(subtable_name, f"{c}.{name}")
 
 
 def apply_nerd_patch(path: str, params: dict) -> str:

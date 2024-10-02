@@ -11,14 +11,11 @@ SRC_FILES = {
         f"{SRC_DIR}/IBMPlexSansJP-Bold.ttf",
     ],
 }
-ITALIC_GLYPHS = ["a", "b", "e", "f", "g", "k", "q"]
-ITALIC_FILES = {
-    "Regular": {g: f"{SRC_DIR}/italic/Regular/{g}.svg" for g in ITALIC_GLYPHS},
-    "Bold": {g: f"{SRC_DIR}/italic/Bold/{g}.svg" for g in ITALIC_GLYPHS},
-}
+ITALIC_CHARS = ["a", "b", "e", "f", "g", "k", "q"]
+CV33_CHARS = ["uni3000"]
 NERD_PATCHER = "./FontPatcher/font-patcher"
 
-FAMILY = "FirpleBeta"
+FAMILY = "FirpleBeta7"
 VERSION = "5.000"
 COPYRIGHT = "Copyright 2021 negset"
 PLEX_SCALE = 1.9
