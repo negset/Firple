@@ -128,6 +128,8 @@ def generate_font(params: dict) -> str:
     plex.copy()
     frcd.paste()
 
+    create_lookup("cv33", CV33_CHARS, frcd, plex, params)
+
     print("Transforming glyphs...")
     w = frcd["A"].width
     half_width = int(w * SLIM_SCALE) if params["slim"] else w
@@ -143,8 +145,6 @@ def generate_font(params: dict) -> str:
             )
         )
         glyph.width = width
-
-    create_lookup("cv33", CV33_CHARS, frcd, params)
 
     if params["italic"]:
         print("Skewing glyphs (2/2)...")
@@ -179,7 +179,13 @@ def generate_font(params: dict) -> str:
     return out_path
 
 
-def create_lookup(name: str, chars: list, font: fontforge.font, params: dict):
+def create_lookup(
+    name: str,
+    chars: list,
+    frcd: fontforge.font,
+    plex: fontforge.font,
+    params: dict,
+):
     print(f"Creating {name} lookup...")
     glyph_paths = {
         c: f'{SRC_DIR}/{name}/{params["weight"]}/{c}.{name}.svg' for c in chars
@@ -217,20 +223,18 @@ def create_lookup(name: str, chars: list, font: fontforge.font, params: dict):
             ),
         ),
     )
-    font.addLookup(lookup_name, "gsub_single", None, feature_script_lang)
-    font.addLookupSubtable(lookup_name, subtable_name)
+    frcd.addLookup(lookup_name, "gsub_single", None, feature_script_lang)
+    frcd.addLookupSubtable(lookup_name, subtable_name)
 
     for c in chars:
-        g = font.createChar(-1, f"{c}.{name}")
-        g.importOutlines(f'{SRC_DIR}/{name}/{params["weight"]}/{c}.{name}.svg')
-        if params["slim"]:
-            g.width = int(2 * font["A"].width * SLIM_SCALE)
-            offset = g.width * (SLIM_SCALE - 1)
-            g.transform(psMat.translate(offset, 0))
-        else:
-            g.width = 2 * font["A"].width
-        font.selection.select(("more",), g)
-        font[c].addPosSub(subtable_name, f"{c}.{name}")
+        g = frcd.createChar(-1, f"{c}.{name}")
+        g.importOutlines(
+            f'{SRC_DIR}/{name}/{params["weight"]}/{c}.{name}.svg', scale=False
+        )
+        g.width = frcd["uni3042"].width  # uni3042 = あ
+        g.transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
+        frcd.selection.select(("more",), g)
+        frcd[c].addPosSub(subtable_name, f"{c}.{name}")
 
 
 def apply_nerd_patch(path: str, params: dict) -> str:
