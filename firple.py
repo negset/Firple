@@ -131,8 +131,7 @@ def generate_font(params: dict) -> str:
     create_lookup("cv33", CV33_CHARS, frcd, plex, params)
 
     print("Transforming glyphs...")
-    w = frcd["A"].width
-    half_width = int(w * SLIM_SCALE) if params["slim"] else w
+    half_width = frcd["A"].width
     full_width = half_width * 2
     for glyph in frcd.selection.byGlyphs:
         scaled = glyph.width * PLEX_SCALE
