@@ -129,6 +129,7 @@ def generate_font(params: dict) -> str:
     frcd.paste()
 
     create_lookup("cv33", CV33_CHARS, frcd, plex, params)
+    create_lookup("ss11", SS11_CHARS, frcd, plex, params)
 
     print("Transforming glyphs...")
     half_width = frcd["A"].width

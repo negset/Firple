@@ -11,11 +11,31 @@ SRC_FILES = {
         f"{SRC_DIR}/IBMPlexSansJP-Bold.ttf",
     ],
 }
-ITALIC_CHARS = ["a", "b", "e", "f", "g", "k", "q"]
+ITALIC_CHARS = [
+    "a",
+    "b",
+    "e",
+    "f",
+    "g",
+    "k",
+    "q",
+]
 CV33_CHARS = ["uni3000"]
+SS11_CHARS = [
+    "uni3071",
+    "uni3074",
+    "uni3077",
+    "uni307A",
+    "uni307D",
+    "uni30D1",
+    "uni30D4",
+    "uni30D7",
+    "uni30DA",
+    "uni30DD",
+]
 NERD_PATCHER = "./FontPatcher/font-patcher"
 
-FAMILY = "FirpleBeta7"
+FAMILY = "FirpleBeta13"
 VERSION = "5.000"
 COPYRIGHT = "Copyright 2021 negset"
 PLEX_SCALE = 1.9
