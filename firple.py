@@ -119,7 +119,7 @@ def generate_font(params: dict) -> str:
     plex.selection.none()
     frcd.selection.none()
     for i in range(sys.maxunicode + 1):
-        is_plex_preferred = chr(i) in PLEX_PREFERRED_GLYPHS
+        is_plex_preferred = chr(i) in PLEX_PREFERRED_CHARS
         if is_plex_preferred or (i in plex and i not in frcd):
             plex.selection.select(("more",), i)
             frcd.selection.select(("more",), i)
@@ -229,9 +229,10 @@ def create_lookup(
     for c in chars:
         g = frcd.createChar(-1, f"{c}.{name}")
         g.importOutlines(
-            f'{SRC_DIR}/{name}/{params["weight"]}/{c}.{name}.svg', scale=False
+            f'{SRC_DIR}/{name}/{params["weight"]}/{c}.{name}.svg',
+            scale=False,
         )
-        g.width = frcd["uni3042"].width  # uni3042 = あ
+        g.width = frcd[c].width
         g.transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
         frcd.selection.select(("more",), g)
         frcd[c].addPosSub(subtable_name, f"{c}.{name}")
