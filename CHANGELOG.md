@@ -1,3 +1,15 @@
+## Version 5.000
+
+- 全角スペース表示機能を追加 (cv33)
+- 半濁点強調機能を追加 (ss11)
+- イタリック体の字形を更新
+- イタリック体のヒンティングを修正
+- 生成スクリプトとダウンロード用スクリプトを更新
+- ベースフォント
+  - Fira Code Version 6.002
+  - IBM Plex Sans JP (TrueType/hinted) Version 1.001
+  - Nerd Fonts v3.2.1
+
 ## Version 4.000
 
 - Nerd Fonts 対応

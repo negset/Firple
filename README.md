@@ -1,7 +1,7 @@
 # プログラミング向けフォント Firple
 
-Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans JP](https://github.com/IBM/plex) を
-合成したプログラミング向けフォントです。
+[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans JP](https://github.com/IBM/plex) を
+合成したプログラミング向け日本語フォントです。
 
 ![Firple Regular サンプル](https://github.com/negset/Firple/raw/images/sample.png)
 
@@ -16,7 +16,7 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
   半角文字と全角文字の横幅の比を 1:2 に揃えています。
 
-- リガチャに対応
+- リガチャ対応
 
   Fira Code が持つプログラミング向けのリガチャを利用できます。
 
@@ -26,7 +26,7 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 
 - 独自のイタリック体
 
-  Fira Code には無い、Firple 独自の字形を持ったイタリック体を提供しています。
+  Firple 独自の字形を持ったイタリック体を提供しています。
 
 - Slim サブファミリー
 
@@ -35,6 +35,20 @@ Firple は、[Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans 
 - Nerd Fonts 対応
 
   [Nerd Fonts](https://www.nerdfonts.com/) の多彩なグリフを含んでいます。
+
+## フォント機能
+
+OpenType features による字形の変更に対応しています。  
+対応するエディタで設定を変更することで、以下の機能を使用できます。  
+([各種エディタの有効化方法](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets))
+
+- 全角スペース可視化 (cv33)
+
+  全角スペースを可視化します。
+
+- 半濁点の強調 (ss11)
+
+  半濁点を強調して濁点と判別しやすくします。
 
 ## フォントファミリー
 
@@ -51,7 +65,7 @@ Fira Code の英字をそのまま利用できます。日本語の文字に字�
 
 ### Firple Slim
 
-Fira Code の字幅を縮小しています。一度に多くの文字を表示でき、日本語文字が自然な字間になります。
+Fira Code の字幅を縮小しています。1 行に多くの文字を表示でき、日本語文字が自然な字間になります。
 
 |フォント名             |説明                           |
 |:----------------------|:------------------------------|
