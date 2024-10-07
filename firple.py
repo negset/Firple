@@ -16,7 +16,7 @@ from fontTools.ttLib import TTFont
 from settings import *
 
 
-def generate(slim: bool, bold: bool, italic: bool, nerd: bool):
+def generate(slim: bool, bold: bool, italic: bool, nerd: bool, freeze_features: tuple):
     params = {}
     params["family"] = f"{FAMILY} Slim" if slim else FAMILY
     params["weight"] = "Bold" if bold else "Regular"
@@ -33,6 +33,7 @@ def generate(slim: bool, bold: bool, italic: bool, nerd: bool):
     )
     params["slim"] = slim
     params["italic"] = italic
+    params["freeze_features"] = freeze_features if freeze_features else []
 
     print(f'\n[{params["name"]}]')
     path = generate_font(params)
@@ -128,8 +129,15 @@ def generate_font(params: dict) -> str:
     plex.copy()
     frcd.paste()
 
-    create_lookup("cv33", CV33_CHARS, frcd, plex, params)
-    create_lookup("ss11", SS11_CHARS, frcd, plex, params)
+    if "cv33" in params["freeze_features"]:
+        freeze_feature("cv33", CV33_CHARS, frcd, plex, params)
+    else:
+        create_feature("cv33", CV33_CHARS, frcd, plex, params)
+
+    if "ss11" in params["freeze_features"]:
+        freeze_feature("ss11", SS11_CHARS, frcd, plex, params)
+    else:
+        create_feature("ss11", SS11_CHARS, frcd, plex, params)
 
     print("Transforming glyphs...")
     half_width = frcd["A"].width
@@ -161,10 +169,10 @@ def generate_font(params: dict) -> str:
     frcd.weight = params["weight"]
     frcd.copyright = f"{COPYRIGHT}\n{frcd.copyright}\n{plex.copyright}"
     frcd.os2_unicoderanges = tuple(
-        a | b for a, b in zip(frcd.os2_unicoderanges, plex.os2_unicoderanges)
+        f | p for f, p in zip(frcd.os2_unicoderanges, plex.os2_unicoderanges)
     )
     frcd.os2_codepages = tuple(
-        a | b for a, b in zip(frcd.os2_codepages, plex.os2_codepages)
+        f | p for f, p in zip(frcd.os2_codepages, plex.os2_codepages)
     )
     if params["italic"]:
         frcd.italicangle = -ITALIC_SKEW
@@ -179,25 +187,25 @@ def generate_font(params: dict) -> str:
     return out_path
 
 
-def create_lookup(
-    name: str,
+def create_feature(
+    code: str,
     chars: list,
     frcd: fontforge.font,
     plex: fontforge.font,
     params: dict,
 ):
-    print(f"Creating {name} lookup...")
+    print(f"Creating {code} feature...")
     glyph_paths = {
-        c: f'{SRC_DIR}/{name}/{params["weight"]}/{c}.{name}.svg' for c in chars
+        c: f'{SRC_DIR}/{code}/{params["weight"]}/{c}.{code}.svg' for c in chars
     }
     # check if glyph files exist
     required(params["name"], list(glyph_paths.values()))
 
-    lookup_name = f"{name} lookup"
-    subtable_name = f"{name} lookup subtable"
+    lookup_name = f"{code} lookup"
+    subtable_name = f"{code} lookup subtable"
     feature_script_lang = (
         (
-            name,
+            code,
             (
                 ("DFLT", ("dflt",)),
                 ("cyrl", ("dflt",)),
@@ -227,15 +235,40 @@ def create_lookup(
     frcd.addLookupSubtable(lookup_name, subtable_name)
 
     for c in chars:
-        g = frcd.createChar(-1, f"{c}.{name}")
+        g = frcd.createChar(-1, f"{c}.{code}")
         g.importOutlines(
-            f'{SRC_DIR}/{name}/{params["weight"]}/{c}.{name}.svg',
+            f'{SRC_DIR}/{code}/{params["weight"]}/{c}.{code}.svg',
             scale=False,
         )
         g.width = frcd[c].width
         g.transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
         frcd.selection.select(("more",), g)
-        frcd[c].addPosSub(subtable_name, f"{c}.{name}")
+        frcd[c].addPosSub(subtable_name, f"{c}.{code}")
+
+
+def freeze_feature(
+    code: str,
+    chars: list,
+    frcd: fontforge.font,
+    plex: fontforge.font,
+    params: dict,
+):
+    print(f"Freezing {code} feature...")
+    glyph_paths = {
+        c: f'{SRC_DIR}/{code}/{params["weight"]}/{c}.{code}.svg' for c in chars
+    }
+    # check if glyph files exist
+    required(params["name"], list(glyph_paths.values()))
+
+    for c in chars:
+        w = frcd[c].width
+        frcd[c].clear()
+        frcd[c].importOutlines(
+            f'{SRC_DIR}/{code}/{params["weight"]}/{c}.{code}.svg',
+            scale=False,
+        )
+        frcd[c].transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
+        frcd[c].width = w
 
 
 def apply_nerd_patch(path: str, params: dict) -> str:
@@ -345,6 +378,12 @@ def parse_arguments():
         help="disable nerd fonts patching",
     )
     parser.add_argument(
+        "--freeze-features",
+        choices=["cv33", "ss11"],
+        nargs="*",
+        help="freeze specified OpenType features",
+    )
+    parser.add_argument(
         "--keep-tmp-files",
         action="store_true",
         help="do not delete temporary files on exit",
@@ -392,26 +431,27 @@ if __name__ == "__main__":
     if args.all or args.single is None:
         # generate all variants, weights and styles
         # Regular
-        generate(slim=False, bold=False, italic=False, nerd=args.nerd)
+        generate(False, False, False, args.nerd, args.freeze_features)
         # Italic
-        generate(slim=False, bold=False, italic=True, nerd=args.nerd)
+        generate(False, False, True, args.nerd, args.freeze_features)
         # Bold
-        generate(slim=False, bold=True, italic=False, nerd=args.nerd)
+        generate(False, True, False, args.nerd, args.freeze_features)
         # Bold Italic
-        generate(slim=False, bold=True, italic=True, nerd=args.nerd)
+        generate(False, True, True, args.nerd, args.freeze_features)
         # Slim Regular
-        generate(slim=True, bold=False, italic=False, nerd=args.nerd)
+        generate(True, False, False, args.nerd, args.freeze_features)
         # Slim Italic
-        generate(slim=True, bold=False, italic=True, nerd=args.nerd)
+        generate(True, False, True, args.nerd, args.freeze_features)
         # Slim Bold
-        generate(slim=True, bold=True, italic=False, nerd=args.nerd)
+        generate(True, True, False, args.nerd, args.freeze_features)
         # Slim Bold Italic
-        generate(slim=True, bold=True, italic=True, nerd=args.nerd)
+        generate(True, True, True, args.nerd, args.freeze_features)
     else:
         # generate a single font file with specified styles
         generate(
-            slim="slim" in args.single,
-            bold="bold" in args.single,
-            italic="italic" in args.single,
-            nerd=args.nerd,
+            "slim" in args.single,
+            "bold" in args.single,
+            "italic" in args.single,
+            args.nerd,
+            args.freeze_features,
         )
