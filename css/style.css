@@ -54,6 +54,10 @@ body {
   font-family: "Firple Slim", sans-serif;
 }
 
+code, .button, .font-firple {
+  font-family: "Firple", monospace;
+}
+
 .navbar {
   box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
 }
@@ -114,11 +118,17 @@ body {
 
 .button {
   font-weight: 700;
+  letter-spacing: .1em;
+}
+
+.button .icon {
+  font-weight: 400;
 }
 
 h2.title::before {
   color: #485fc7;
   font-family: 'remixicon' !important;
+  font-weight: 400;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -126,14 +136,18 @@ h2.title::before {
 }
 
 h2.title#about::before {
-  content: "\F044";
+  content: "\F047";
 }
 
-h2.title#spec::before {
+h2.title#specs::before {
   content: "\F206";
 }
 
-h2.title#family::before {
+h2.title#features::before {
+  content: "\F218";
+}
+
+h2.title#families::before {
   content: "\ED8D";
 }
 
@@ -166,16 +180,12 @@ h3.title::before {
   content: "\EB7B";
 }
 
-strong {
-  color: hsl(348, 100%, 61%);
-}
-
-.font-firple {
-  font-family: "Firple";
-}
-
 .sample-config {
   margin: 0.5rem 0;
+}
+
+.sample-config:last-of-type {
+  margin-bottom: 1rem;
 }
 
 .sample-config > label {
