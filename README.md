@@ -39,8 +39,8 @@
 ## フォント機能
 
 OpenType features による字形の変更に対応しています。  
-対応するエディタで設定を変更することで、以下の機能を使用できます (
-[各種エディタの有効化方法](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets))。
+対応するエディタで設定を変更することで、以下の機能を使用できます
+([各種エディタの有効化方法](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets))。
 
 またフォント生成時に `--freeze-features` オプションを指定することで、標準でこれらの機能を有効化できます。
 
