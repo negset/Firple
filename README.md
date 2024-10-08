@@ -86,8 +86,9 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
 
 以下のボタンからフォントをダウンロードできます。
 
-![ダウンロード](https://img.shields.io/github/downloads/negset/Firple/total?style=for-the-badge&logo=github&color=485fc7
-)
+<a href="https://github.com/negset/Firple/releases" target="_blank" rel="noopener noreferrer">
+  <img alt="ダウンロード" src="https://img.shields.io/github/downloads/negset/Firple/total?style=for-the-badge&logo=github&color=485fc7">
+</a>
 
 ## ライセンス
 
