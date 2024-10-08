@@ -39,7 +39,7 @@ SS11_CHARS = [
     "uniFF9F",
 ]
 
-FAMILY = "FirpleBeta16"
+FAMILY = "Firple"
 VERSION = "5.000"
 COPYRIGHT = "Copyright 2021 negset"
 PLEX_SCALE = 1.9
