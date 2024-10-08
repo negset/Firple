@@ -40,7 +40,7 @@
 
 OpenType features による字形の変更に対応しています。  
 対応するエディタで設定を変更することで、以下の機能を使用できます。  
-(各種エディタにおける有効化方法は、[FiraCode のドキュメント](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets) を参照してください)。
+(各種エディタにおける有効化方法は、[FiraCode のドキュメント](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets) を参照してください。)
 
 またフォント生成時に `--freeze-features` オプションを指定することで、これらの機能を標準で有効化できます。
 
