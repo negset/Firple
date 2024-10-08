@@ -3,7 +3,7 @@
 [Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans JP](https://github.com/IBM/plex) を
 合成したプログラミング向け日本語フォントです。
 
-![Firple Regular サンプル](https://github.com/negset/Firple/raw/images/sample.png)
+![Firple サンプル](https://github.com/negset/Firple/raw/images/sample-top.png)
 
 ## 特徴
 
@@ -39,16 +39,20 @@
 ## フォント機能
 
 OpenType features による字形の変更に対応しています。  
-対応するエディタで設定を変更することで、以下の機能を使用できます。  
-([各種エディタの有効化方法](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets))
+対応するエディタで設定を変更することで、以下の機能を使用できます (
+[各種エディタの有効化方法](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets))。
 
-- 全角スペース可視化 (cv33)
+またフォント生成時に `--freeze-features` オプションを指定することで、標準でこれらの機能を有効化できます。
+
+- 全角スペース可視化 (`cv33`)
 
   全角スペースを可視化します。
 
-- 半濁点の強調 (ss11)
+- 半濁点の強調 (`ss11`)
 
   半濁点を強調して濁点と判別しやすくします。
+
+![OpenType features サンプル](https://github.com/negset/Firple/raw/images/sample-features.png)
 
 ## フォントファミリー
 
@@ -80,7 +84,11 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
 
 ## ダウンロード
 
-[Releases](https://github.com/negset/Firple/releases) から入手できます。
+以下のボタンからフォントをダウンロードできます。
+
+<a href="https://github.com/negset/Firple/releases" target="_blank" rel="noopener noreferrer">
+  <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/negset/Firple/total">
+</a>
 
 ## ライセンス
 
@@ -104,3 +112,12 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
   $ make setup
   $ make all
   ```
+
+  または
+
+  ```sh
+  $ ./downloader.py --all
+  $ ./firple.py --all
+  ```
+
+  スクリプトのコマンドラインオプションは `--help` で確認できます。
