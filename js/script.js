@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     burgerTarget.classList.remove("is-active");
   };
 
-  const textArea = document.querySelector(".sample-text");
+  const textArea = document.querySelector(".preview-text");
   document.getElementById("subfamily").onchange = e => {
     const v = e.target.value;
     textArea.style.fontFamily = (v == "firple") ? "Firple" : "Firple Slim";

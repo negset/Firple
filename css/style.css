@@ -54,7 +54,9 @@ body {
   font-family: "Firple Slim", sans-serif;
 }
 
-code, .button, .font-firple {
+code,
+pre,
+.font-firple {
   font-family: "Firple", monospace;
 }
 
@@ -144,14 +146,14 @@ h2.title#specs::before {
 }
 
 h2.title#features::before {
-  content: "\F218";
+  content: "\EC9D";
 }
 
 h2.title#families::before {
   content: "\ED8D";
 }
 
-h2.title#sample::before {
+h2.title#preview::before {
   content: "\F0D1";
 }
 
@@ -180,19 +182,47 @@ h3.title::before {
   content: "\EB7B";
 }
 
-.sample-config {
+pre.sample-text {
+  font-size: 2rem;
+  padding: 1rem 2rem;
+  line-height: 1.2em;
+  white-space: nowrap;
+}
+
+pre.sample-text .toggle::before {
+  font-family: "remixicon", "Firple" !important;
+  font-style: normal;
+  font-size: .4em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  width: 4rem;
+  vertical-align: 16%;
+}
+
+pre.sample-text .toggle.off::before {
+  content: "\F219  OFF";
+  color: hsl(348, 100%, 61%);
+}
+
+pre.sample-text .toggle.on::before {
+  content: "\F218  ON";
+  color: hsl(141, 71%, 48%);
+}
+
+.preview-config {
   margin: 0.5rem 0;
 }
 
-.sample-config:last-of-type {
+.preview-config:last-of-type {
   margin-bottom: 1rem;
 }
 
-.sample-config > label {
+.preview-config>label {
   margin-right: 1rem;
 }
 
-.sample-text.textarea {
+.preview-text.textarea {
   font-family: "Firple";
   padding: 1rem;
   font-size: 20px;

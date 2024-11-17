@@ -40,8 +40,7 @@
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button is-link" href="https://github.com/negset/Firple" target="_blank"
-              rel="noopener noreferrer">
+            <a class="button is-link" href="https://github.com/negset/Firple" target="_blank">
               <span class="icon"><i class="ri-github-fill"></i></span>
               <span>star</span>
             </a>
@@ -59,7 +58,7 @@
         <h1 class="title is-1 font-firple">Firple</h1>
         <a class="button is-link is-large is-rounded is-focused" href="#download">
           <span class="icon"><i class="ri-download-line"></i></span>
-          <span class="font-firple">download</span>
+          <span class="font-firple">DOWNLOAD</span>
         </a>
       </div>
     </section>
@@ -68,13 +67,14 @@
       <div class="content">
         <h2 class="title" id="about">これは何？</h2>
         <p>
-          プログラミング向けフォントとして人気の高い <a href="https://github.com/tonsky/FiraCode" target="_blank"
-            rel="noopener noreferrer">Fira Code</a> に、可読性の高い <a href="https://github.com/IBM/plex" target="_blank"
-            rel="noopener noreferrer">IBM Plex Sans JP</a> を合成したプログラミング向け日本語フォントです。
+          プログラミング向けフォントとして人気の高い <a href="https://github.com/tonsky/FiraCode" target="_blank">Fira Code</a>
+          に、可読性の高い <a href="https://github.com/IBM/plex" target="_blank">IBM Plex Sans JP</a> を合成したプログラミング向け日本語フォントです。
         </p>
         <p>
-          Fira Code が提供するプログラミング向けのリガチャ (合字) が利用できます。<br>
-          さらに Firple 独自の<b>イタリック体</b>や<b>長体</b>、OpenType features による<b>字体切り替え</b>を提供しています。
+          Fira Code が提供するプログラミング向けのリガチャ (合字) が利用できます。
+        </p>
+        <p>
+          さらに Firple 独自の<strong>イタリック体</strong>や<strong>長体</strong>、OpenType features による<strong>字体切り替え</strong>を提供しています。
         </p>
         <img src="https://github.com/negset/Firple/raw/images/sample-top.png" alt="Firple サンプル">
       </div>
@@ -88,18 +88,42 @@
           Fira Code が持つグリフを全てそのまま利用できます。<br>
           加えて、日本語文字や一部記号を IBM Plex Sans JP のグリフで補っています。
         </p>
+        <pre class="sample-text">
+          0123 ABCD abcd {}[]()&gt;@&lt;<br>
+          色は匂へど 散りぬるを
+        </pre>
         <h3 class="title is-4">字幅を調整</h3>
         <p>半角文字と全角文字の横幅の比を 1:2 に揃えています。</p>
+        <pre class="sample-text">
+          | Jan. | Feb. | Mar. |<br>
+          | 睦月 | 如月 | 弥生 |
+        </pre>
         <h3 class="title is-4">リガチャに対応</h3>
         <p>Fira Code が持つプログラミング向けのリガチャを利用できます。</p>
+        <pre class="sample-text">
+          <i class="toggle off"></i><span style="font-variant-ligatures:none">!= -&gt;&gt; ++ := :: && ||</span><br>
+          <i class="toggle on"></i>!= -&gt;&gt; ++ := :: && ||
+        </pre>
         <h3 class="title is-4">2 種のウェイト</h3>
         <p>Regular と Bold の 2 ウェイトを提供しています。</p>
+        <pre class="sample-text">
+          Regular レギュラー 通常<br>
+          <span style="font-weight:700">Bold ボールド 太字</span>
+        </pre>
         <h3 class="title is-4">独自のイタリック体</h3>
         <p>Firple 独自の字形を持ったイタリック体を提供しています。</p>
+        <pre class="sample-text">
+          quickly forged blades<br>
+          <span style="font-style:italic">quickly forged blades</span>
+        </pre>
         <h3 class="title is-4">Slim サブファミリー</h3>
         <p>Fira Code の字幅を縮小した Slim サブファミリーを提供しています。</p>
+        <pre class="sample-text">
+          Firple ... 字幅が通常<br>
+          <span style="font-family:Firple Slim">Firple Slim ... 字幅が小さい</span>
+        </pre>
         <h3 class="title is-4">Nerd Fonts 対応</h3>
-        <p><a href="https://www.nerdfonts.com/"  target="_blank" rel="noopener noreferrer">Nerd Fonts</a> の多彩なグリフを含んでいます。</p>
+        <p><a href="https://www.nerdfonts.com/" target="_blank">Nerd Fonts</a> の多彩なグリフを含んでいます。</p>
       </div>
     </section>
 
@@ -109,16 +133,24 @@
         <p>
           OpenType features による字形の変更に対応しています。<br>
           対応するエディタで設定を変更することで、以下の機能を使用できます。<br>
-          (各種エディタにおける有効化方法は、<a href="https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets" target="_blank" rel="noopener noreferrer">Fira Code のドキュメント</a>を参照してください。)
+          (各種エディタにおける有効化方法は、<a href="https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets"
+            target="_blank">Fira Code のドキュメント</a>を参照してください。)
         </p>
         <p>
           またフォント生成時に <code>--freeze-features</code> オプションを指定することで、これらの機能を標準で有効化できます。
         </p>
         <h3 class="title is-4"><code>cv33</code> 全角スペース可視化</h3>
         <p>全角スペースを可視化して、意図せぬ混入を防ぎます。</p>
+        <pre class="sample-text">
+          <i class="toggle off"></i>　　　&lt;-全角スペース<br>
+          <i class="toggle on"></i><span style="font-feature-settings:'cv33'">　　　&lt;-全角スペース</span>
+        </pre>
         <h3 class="title is-4"><code>ss11</code> 半濁点の強調</h3>
         <p>半濁点を強調して、濁点と判別しやすくします。</p>
-        <img src="https://github.com/negset/Firple/raw/images/sample-features.png">
+        <pre class="sample-text">
+          <i class="toggle off"></i>ぱぴぷぺぽ パピプペポ<br>
+          <i class="toggle on"></i><span style="font-feature-settings:'ss11'">ぱぴぷぺぽ パピプペポ</span>
+        </pre>
       </div>
     </section>
 
@@ -190,24 +222,24 @@
 
     <section class="section">
       <div class="content">
-        <h2 class="title" id="sample">サンプル</h2>
+        <h2 class="title" id="preview">プレビュー</h2>
         <p>
-          サンプルテキストは自由に変更できます。<br>
-          (Web サンプルでは Nerd Fonts に対応していません。)
+          テキストは自由に変更できます。<br>
+          (Web プレビューでは Nerd Fonts に対応していません。)
         </p>
-        <div class="sample-config select">
+        <div class="preview-config select">
           <select id="subfamily">
             <option value="firple">Firple</option>
             <option value="firple-slim">Firple Slim</option>
           </select>
         </div>
-        <div class="sample-config">
+        <div class="preview-config">
           <label for="weight">
             <span id="weight-text"></span>
             <input type="range" id="weight" min="10" max="50">
           </label>
         </div>
-        <div class="sample-config">
+        <div class="preview-config">
           <label for="bold" style="font-weight: bold">
             <input type="checkbox" id="bold">
             Bold
@@ -217,13 +249,13 @@
             Italic
           </label>
         </div>
-        <div class="sample-config">
+        <div class="preview-config">
           <label for="ligature">
             <input type="checkbox" id="ligature" checked>
             リガチャを有効にする
           </label>
         </div>
-        <div class="sample-config">
+        <div class="preview-config">
           <label for="cv33">
             <input type="checkbox" id="cv33">
             <code>cv33</code> 全角スペース可視化
@@ -233,7 +265,7 @@
             <code>ss11</code> 半濁点の強調
           </label>
         </div>
-        <textarea class="sample-text textarea">
+        <textarea class="preview-text textarea">
 彼らの機器や装置はすべて生命体だ。
 Almost before we knew it, we had left the ground.
 
@@ -245,9 +277,9 @@ Almost before we knew it, we had left the ground.
       <div class="content">
         <h2 class="title is-3" id="download">ダウンロード</h2>
         <p>以下のボタンからフォントをダウンロードできます。</p>
-        <a href="https://github.com/negset/Firple/releases" target="_blank" rel="noopener noreferrer">
-          <img alt="ダウンロード" src="https://img.shields.io/github/downloads/negset/Firple/total?style=for-the-badge&logo=github&color=485fc7
-">
+        <a href="https://github.com/negset/Firple/releases" target="_blank">
+          <img alt="ダウンロード"
+            src="https://img.shields.io/github/downloads/negset/Firple/total?style=for-the-badge&logo=github&color=485fc7">
         </a>
       </div>
     </section>
@@ -255,15 +287,14 @@ Almost before we knew it, we had left the ground.
     <section class="section">
       <div class="content">
         <h2 class="title is-3" id="changelog">更新履歴</h2>
-        <a href="https://github.com/negset/Firple/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">
-          CHANGELOG.md</a>
+        <a href="https://github.com/negset/Firple/blob/master/CHANGELOG.md" target="_blank">CHANGELOG.md</a>
       </div>
     </section>
 
     <section class="section">
       <div class="content">
         <h2 class="title is-3" id="license">ライセンス</h2>
-        <a href="https://github.com/negset/Firple/blob/master/LICENSE.txt" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/negset/Firple/blob/master/LICENSE.txt" target="_blank">
           SIL Open Font License (OFL) Version 1.1</a>
       </div>
     </section>
