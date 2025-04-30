@@ -40,7 +40,7 @@ SS11_CHARS = [
 ]
 
 FAMILY = "Firple"
-VERSION = "5.000"
+VERSION = "5.100"
 COPYRIGHT = "Copyright 2021 negset"
 PLEX_SCALE = 1.9
 ITALIC_SKEW = 12

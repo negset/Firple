@@ -5,6 +5,14 @@
 
 ![Firple サンプル](https://github.com/negset/Firple/raw/images/sample-top.png)
 
+## ダウンロード
+
+以下のボタンからフォントをダウンロードできます。
+
+<a href="https://github.com/negset/Firple/releases" target="_blank" rel="noopener noreferrer">
+  <img alt="ダウンロード" src="https://img.shields.io/github/downloads/negset/Firple/total?style=for-the-badge&logo=github&color=485fc7">
+</a>
+
 ## 特徴
 
 - 豊富なグリフ
@@ -34,13 +42,13 @@
 
 - Nerd Fonts 対応
 
-  [Nerd Fonts](https://www.nerdfonts.com/) の多彩なグリフを含んでいます。
+  [Nerd Fonts](https://www.nerdfonts.com/) の多彩なグリフを利用できます。
 
 ## フォント機能
 
 OpenType features による字形の変更に対応しています。  
 対応するエディタで設定を変更することで、以下の機能を使用できます。  
-(各種エディタにおける有効化方法は、[FiraCode のドキュメント](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets) を参照してください。)
+各種エディタにおける有効化方法は、[FiraCode のドキュメント](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets) を参照してください。
 
 またフォント生成時に `--freeze-features` オプションを指定することで、これらの機能を標準で有効化できます。
 
@@ -81,14 +89,6 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
 ## サンプル
 
 [こちら](https://negset.com/Firple/#sample) で任意のテキストの表示を確認できます。
-
-## ダウンロード
-
-以下のボタンからフォントをダウンロードできます。
-
-<a href="https://github.com/negset/Firple/releases" target="_blank" rel="noopener noreferrer">
-  <img alt="ダウンロード" src="https://img.shields.io/github/downloads/negset/Firple/total?style=for-the-badge&logo=github&color=485fc7">
-</a>
 
 ## ライセンス
 

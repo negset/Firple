@@ -10,9 +10,9 @@ from zipfile import ZipFile
 from settings import SRC_FILES
 
 FRCD_URL = "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
-PLEX_URL = "https://github.com/IBM/plex/archive/refs/tags/v6.4.1.zip"
+PLEX_URL = "https://github.com/IBM/plex/releases/download/%40ibm%2Fplex-sans-jp%401.1.0/ibm-plex-sans-jp.zip"
 NERD_URL = (
-    "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/FontPatcher.zip"
+    "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FontPatcher.zip"
 )
 
 
@@ -67,7 +67,7 @@ def plex_sans():
                 outpath = SRC_FILES[weight][1]
                 name = basename(outpath)
                 tmppath = zf.extract(
-                    f"plex-6.4.1/IBM-Plex-Sans-JP/fonts/complete/ttf/hinted/{name}",
+                    f"ibm-plex-sans-jp/fonts/complete/ttf/hinted/{name}",
                     tmpdir,
                 )
                 move(tmppath, outpath)

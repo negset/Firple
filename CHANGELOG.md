@@ -1,3 +1,11 @@
+## Version 5.100
+- IBM Plex Sans のバージョンを更新
+- Nerd Fonts のバージョンを更新
+- ベースフォント
+  - Fira Code Version 6.002
+  - IBM Plex Sans JP (TrueType/hinted) Version 1.002
+  - Nerd Fonts v3.4.0
+
 ## Version 5.000
 
 - 全角スペース表示機能を追加 (`cv33`)
