@@ -8,4 +8,4 @@ all: scripts/firple.py
 	scripts/firple.py --all
 
 clean:
-	rm -rf __pycache__/ FontPatcher/ out/* tmp/ && find src/* | grep .ttf | xargs rm -rf
+	rm -rf FontPatcher/ out/* scripts/__pycache__/ src/*.ttf tmp/
