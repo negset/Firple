@@ -12,7 +12,6 @@ from contextlib import nullcontext
 import fontforge
 import psMat
 from fontTools.ttLib import TTFont
-
 from settings import *
 
 
@@ -63,19 +62,14 @@ def generate_font(params: dict) -> str:
         with ErrorSuppressor.suppress():
             frcd = fontforge.open(frcd_path)
 
-        # unlink all reference
-        frcd.selection.all()
-        frcd.unlinkReferences()
-
         print("Importing italic glyphs...")
         for c in ITALIC_CHARS:
             frcd[c].clear()
             frcd[c].importOutlines(glyph_paths[c])
             frcd[c].width = frcd["A"].width
-            frcd.selection.select(("less",), c)
 
         print("Skewing glyphs (1/2)...")
-        # all glyphs except italic glyphs
+        frcd.selection.all()
         frcd.transform(
             psMat.compose(
                 psMat.translate(ITALIC_OFFSET, 0),
