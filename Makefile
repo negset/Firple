@@ -1,11 +1,11 @@
 
 .DEFAULT_GOAL := all
 
-setup: downloader.py
-	./downloader.py --all
+setup: scripts/downloader.py
+	scripts/downloader.py --all
 
-all: firple.py
-	./firple.py --all
+all: scripts/firple.py
+	scripts/firple.py --all
 
 clean:
 	rm -rf __pycache__/ FontPatcher/ out/* tmp/ && find src/* | grep .ttf | xargs rm -rf

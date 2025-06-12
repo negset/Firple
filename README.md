@@ -116,8 +116,8 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
   または
 
   ```sh
-  $ ./downloader.py --all
-  $ ./firple.py --all
+  $ scripts/downloader.py --all
+  $ scripts/firple.py --all
   ```
 
   スクリプトのコマンドラインオプションは `--help` で確認できます。
