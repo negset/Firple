@@ -68,15 +68,6 @@ def generate_font(params: dict) -> str:
             frcd[c].importOutlines(glyph_paths[c])
             frcd[c].width = frcd["A"].width
 
-        print("Skewing glyphs (1/2)...")
-        frcd.selection.all()
-        frcd.transform(
-            psMat.compose(
-                psMat.translate(ITALIC_OFFSET, 0),
-                psMat.skew(math.radians(ITALIC_SKEW)),
-            )
-        )
-
         print("Hinting glyphs...")
         frcd.generate(out_path)
         frcd.close()
@@ -102,13 +93,6 @@ def generate_font(params: dict) -> str:
         print("Condensing glyphs...")
         frcd.selection.all()
         frcd.transform(psMat.scale(SLIM_SCALE, 1))
-        if params["italic"]:
-            # fix italic angle
-            frcd.transform(
-                psMat.skew(
-                    math.atan((1 - SLIM_SCALE) * math.tan(math.radians(ITALIC_SKEW)))
-                )
-            )
 
     print("Copying glyphs...")
     plex.selection.none()
@@ -133,7 +117,7 @@ def generate_font(params: dict) -> str:
     else:
         create_feature("ss11", SS11_CHARS, frcd, plex, params)
 
-    print("Transforming glyphs...")
+    print("Transforming copied glyphs...")
     half_width = frcd["A"].width
     full_width = half_width * 2
     for glyph in frcd.selection.byGlyphs:
@@ -149,8 +133,9 @@ def generate_font(params: dict) -> str:
         glyph.width = width
 
     if params["italic"]:
-        print("Skewing glyphs (2/2)...")
+        print("Skewing glyphs...")
         frcd.unlinkReferences()
+        frcd.selection.all()
         frcd.transform(
             psMat.compose(
                 psMat.translate(ITALIC_OFFSET * SLIM_SCALE, 0),
