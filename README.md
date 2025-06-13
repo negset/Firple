@@ -98,7 +98,7 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
 
 - 環境
 
-  Ubuntu 22.04.3 LTS で確認
+  Ubuntu 24.04.2 LTS で確認
 
 - 必要パッケージ
 
@@ -116,8 +116,8 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
   または
 
   ```sh
-  $ scripts/downloader.py --all
-  $ scripts/firple.py --all
+  $ ./scripts/downloader.py --all
+  $ ./scripts/firple.py --all
   ```
 
   スクリプトのコマンドラインオプションは `--help` で確認できます。
