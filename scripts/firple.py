@@ -19,16 +19,12 @@ def generate(slim: bool, bold: bool, italic: bool, nerd: bool, freeze_features: 
     params = {}
     params["family"] = f"{FAMILY} Slim" if slim else FAMILY
     params["weight"] = "Bold" if bold else "Regular"
-    params["name"] = (
-        params["family"]
-        + (" " + params["weight"] if bold or not italic else "")
-        + (" Italic" if italic else "")
+    params["subfamily"] = (params["weight"] + (" Italic" if italic else "")).replace(
+        "Regular Italic", "Italic"
     )
-    params["name_no_spaces"] = (
-        params["family"].replace(" ", "")
-        + "-"
-        + (params["weight"] if bold or not italic else "")
-        + ("Italic" if italic else "")
+    params["name"] = f"{params['family']} {params["subfamily"]}"
+    params["name_no_spaces"] = f"{params['family']}-{params["subfamily"]}".replace(
+        " ", ""
     )
     params["slim"] = slim
     params["italic"] = italic
@@ -38,8 +34,7 @@ def generate(slim: bool, bold: bool, italic: bool, nerd: bool, freeze_features: 
     path = generate_font(params)
     if nerd:
         path = apply_nerd_patch(path, params)
-    path = set_font_params_1(path, params)
-    path = set_font_params_2(path, params)
+    path = set_font_params(path, params)
     print(f"Generation complete! (=> {path})")
 
 
@@ -145,20 +140,6 @@ def generate_font(params: dict) -> str:
 
     print("Generating temporary file...")
     frcd.fullname = params["name"].replace(FAMILY, "Tmp")
-    frcd.weight = params["weight"]
-    frcd.copyright = f"{COPYRIGHT}\n{frcd.copyright}\n{plex.copyright}"
-    frcd.os2_unicoderanges = tuple(
-        f | p for f, p in zip(frcd.os2_unicoderanges, plex.os2_unicoderanges)
-    )
-    frcd.os2_codepages = tuple(
-        f | p for f, p in zip(frcd.os2_codepages, plex.os2_codepages)
-    )
-    if params["italic"]:
-        frcd.italicangle = -ITALIC_SKEW
-        if not params["weight"] == "Regular":
-            frcd.appendSFNTName(
-                "English (US)", "SubFamily", f'{params["weight"]} Italic'
-            )
     frcd.generate(out_path)
     frcd.close()
     plex.close()
@@ -276,34 +257,50 @@ def apply_nerd_patch(path: str, params: dict) -> str:
     return path.replace("-", "NerdFont-")
 
 
-def set_font_params_1(path: str, params: dict) -> dict:
-    print("Setting font parameters (1/2)...")
-    with ErrorSuppressor.suppress():
-        frpl = fontforge.open(path)
-    frpl.familyname = params["family"]
-    frpl.fontname = params["name_no_spaces"]
-    frpl.fullname = params["name"]
-    frpl.version = VERSION
-    frpl.sfntRevision = float(VERSION)
-    frpl.appendSFNTName(
-        "English (US)", "UniqueID", f'{VERSION};{params["name_no_spaces"]}'
-    )
-    frpl.appendSFNTName("English (US)", "Version", f"Version {VERSION}")
-    frpl.generate(path)
-    frpl.close()
-    return path
-
-
-def set_font_params_2(path: str, params: dict) -> str:
-    print("Setting font parameters (2/2)...")
+def set_font_params(path: str, params: dict) -> str:
+    print("Setting font parameters...")
     frcd = TTFont(SRC_FILES[params["weight"]][0])
+    plex = TTFont(SRC_FILES[params["weight"]][1])
     frpl = TTFont(path)
+
+    name_id_to_value = {
+        0: "\n".join(
+            [
+                COPYRIGHT,
+                frcd["name"].names[0].string.decode("UTF-16BE"),
+                plex["name"].names[0].string.decode("UTF-8"),
+            ]
+        ),
+        1: params["family"],
+        2: params["subfamily"],
+        3: f'{VERSION};{params["name_no_spaces"]}',
+        4: params["name"],
+        5: f"Version {VERSION}",
+        6: params["name_no_spaces"],
+    }
+    for name in frpl["name"].names:
+        if name.nameID in name_id_to_value:
+            name.string = name_id_to_value[name.nameID].encode("UTF-16BE")
+
+    ranges = [
+        "ulUnicodeRange1",
+        "ulUnicodeRange2",
+        "ulUnicodeRange3",
+        "ulUnicodeRange4",
+        "ulCodePageRange1",
+        "ulCodePageRange2",
+    ]
+    for r in ranges:
+        setattr(frpl["OS/2"], r, getattr(frcd["OS/2"], r) | getattr(plex["OS/2"], r))
+
     w = frcd["OS/2"].xAvgCharWidth
     frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params["slim"] else w
     frpl["post"].isFixedPitch = 1  # for macOS
+    frpl["head"].fontRevision = float(VERSION)
     if params["italic"]:
         frpl["OS/2"].fsSelection &= ~(1 << 6)  # clear REGULAR bit
         frpl["OS/2"].fsSelection |= 1 << 0  # set ITALIC bit
+        frpl["post"].italicAngle = -ITALIC_SKEW
         frpl["head"].macStyle |= 1 << 1  # set Italic bit
     out_path = f'{OUT_DIR}/{params["name_no_spaces"]}.ttf'
     frpl.save(out_path)
