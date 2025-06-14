@@ -36,9 +36,9 @@
 
   Firple 独自の字形を持ったイタリック体を提供しています。
 
-- Slim サブファミリー
+- Slim ファミリー
 
-  Fira Code の字幅を縮小した Slim サブファミリーを提供しています。
+  Fira Code の字幅を縮小した Slim ファミリーを提供しています。
 
 - Nerd Fonts 対応
 
