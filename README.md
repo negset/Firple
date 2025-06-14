@@ -17,16 +17,16 @@
 
 - 豊富なグリフ
 
-  Fira Code が持つグリフを全てそのまま使用できます。  
+  Fira Code のグリフを全てそのまま使用できます。  
   加えて、日本語文字や一部記号を IBM Plex Sans JP のグリフで補っています。
 
-- 字幅を 1:2 に調整
+- 字幅を調整
 
-  半角文字と全角文字の横幅の比を 1:2 に揃えています。
+  半角文字と全角文字の幅を 1:2 に揃えています。
 
 - リガチャ対応
 
-  Fira Code が持つプログラミング向けのリガチャを利用できます。
+  Fira Code が提供するプログラミング向けのリガチャを利用できます。
 
 - 2 種のウェイト
 
@@ -50,7 +50,7 @@ OpenType features による字形の変更に対応しています。
 対応するエディタで設定を変更することで、以下の機能を使用できます。  
 各種エディタにおける有効化方法は、[FiraCode のドキュメント](https://github.com/tonsky/FiraCode/wiki/How-to-enable-stylistic-sets) を参照してください。
 
-またフォント生成時に `--freeze-features` オプションを指定することで、これらの機能を標準で有効化できます。
+またフォント生成時に `--freeze-features` オプションを使うことで、これらの機能を標準で有効にすることもできます。
 
 - 全角スペース可視化 (`cv33`)
 
@@ -66,7 +66,7 @@ OpenType features による字形の変更に対応しています。
 
 ### Firple
 
-Fira Code の英字をそのまま利用できます。日本語の文字に字間のゆとりが生まれます。
+Fira Code の英字をそのまま利用できます。日本語文字に字間のゆとりが生まれます。
 
 |フォント名         |説明                                     |
 |:------------------|:----------------------------------------|
@@ -96,14 +96,19 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
 
 ## ビルド
 
-- 環境
+- 動作確認済み環境
 
-  Ubuntu 24.04.2 LTS で確認
+  ```
+  Ubuntu 24.04.2 LTS
+  fontforge 20230101
+  fonttools v4.46.0
+  ttfautohint 1.8.4
+  ```
 
 - 必要パッケージ
 
   ```sh
-  $ sudo apt install fontforge python3-fontforge fonttools ttfautohint
+  $ apt install fontforge python3-fontforge fonttools ttfautohint
   ```
 
 - ビルドコマンド
