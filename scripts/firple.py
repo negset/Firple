@@ -164,32 +164,8 @@ def create_feature(
     lookup_name = f"{code} lookup"
     subtable_name = f"{code} lookup subtable"
     feature_script_lang = (
-        (
-            code,
-            (
-                ("DFLT", ("dflt",)),
-                ("cyrl", ("dflt",)),
-                ("grek", ("dflt",)),
-                (
-                    "latn",
-                    (
-                        "AFK ",
-                        "AZE ",
-                        "CAT ",
-                        "CRT ",
-                        "KAZ ",
-                        "MOL ",
-                        "PLK ",
-                        "ROM ",
-                        "TAT ",
-                        "TRK ",
-                        "dflt",
-                    ),
-                ),
-                ("zinh", ("dflt",)),
-                ("zyyy", ("dflt",)),
-            ),
-        ),
+        # (feature_tag, ((script_tag, (language_system_tag, ...)), ...))
+        (code, (("DFLT", ()), ("hani", ()), ("kana", ()), ("latn", ()))),
     )
     frcd.addLookup(lookup_name, "gsub_single", None, feature_script_lang)
     frcd.addLookupSubtable(lookup_name, subtable_name)
