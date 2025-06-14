@@ -11,7 +11,7 @@ from contextlib import nullcontext
 
 import fontforge
 import psMat
-from fontTools.ttLib import TTFont
+from fontTools.ttLib import TTFont, newTable
 from settings import *
 
 
@@ -263,6 +263,7 @@ def set_font_params(path: str, params: dict) -> str:
     plex = TTFont(SRC_FILES[params["weight"]][1])
     frpl = TTFont(path)
 
+    # name table
     name_id_to_value = {
         0: "\n".join(
             [
@@ -282,6 +283,15 @@ def set_font_params(path: str, params: dict) -> str:
         if name.nameID in name_id_to_value:
             name.string = name_id_to_value[name.nameID].encode("UTF-16BE")
 
+    # meta table
+    meta_table = newTable("meta")
+    meta_table.data = {
+        "dlng": "Hani, Hira, Hrkt, Jpan, Kana",  # ISO 15924
+        "slng": "Hani, Hira, Hrkt, Jpan, Kana, Latn",  # ISO 15924
+    }
+    frpl["meta"] = meta_table
+
+    # OS/2 ranges
     ranges = [
         "ulUnicodeRange1",
         "ulUnicodeRange2",
@@ -293,6 +303,7 @@ def set_font_params(path: str, params: dict) -> str:
     for r in ranges:
         setattr(frpl["OS/2"], r, getattr(frcd["OS/2"], r) | getattr(plex["OS/2"], r))
 
+    # others
     w = frcd["OS/2"].xAvgCharWidth
     frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params["slim"] else w
     frpl["post"].isFixedPitch = 1  # for macOS
@@ -302,6 +313,7 @@ def set_font_params(path: str, params: dict) -> str:
         frpl["OS/2"].fsSelection |= 1 << 0  # set ITALIC bit
         frpl["post"].italicAngle = -ITALIC_SKEW
         frpl["head"].macStyle |= 1 << 1  # set Italic bit
+
     out_path = f'{OUT_DIR}/{params["name_no_spaces"]}.ttf'
     frpl.save(out_path)
     frcd.close()
