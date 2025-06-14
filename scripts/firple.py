@@ -6,8 +6,8 @@ import os
 import shutil
 import subprocess
 import sys
-from argparse import ArgumentParser
-from contextlib import nullcontext
+from argparse import ArgumentParser, Namespace
+from contextlib import AbstractContextManager, nullcontext
 
 import fontforge
 import psMat
@@ -15,7 +15,13 @@ from fontTools.ttLib import TTFont, newTable
 from settings import *
 
 
-def generate(slim: bool, bold: bool, italic: bool, nerd: bool, freeze_features: tuple):
+def generate(
+    slim: bool,
+    bold: bool,
+    italic: bool,
+    nerd: bool,
+    freeze_features: list,
+) -> None:
     params = {}
     params["family"] = f"{FAMILY} Slim" if slim else FAMILY
     params["weight"] = "Bold" if bold else "Regular"
@@ -153,7 +159,7 @@ def create_feature(
     frcd: fontforge.font,
     plex: fontforge.font,
     params: dict,
-):
+) -> None:
     print(f"Creating {code} feature...")
     glyph_paths = {
         c: f'{SRC_DIR}/{code}/{params["weight"]}/{c}.{code}.svg' for c in chars
@@ -188,7 +194,7 @@ def freeze_feature(
     frcd: fontforge.font,
     plex: fontforge.font,
     params: dict,
-):
+) -> None:
     print(f"Freezing {code} feature...")
     glyph_paths = {
         c: f'{SRC_DIR}/{code}/{params["weight"]}/{c}.{code}.svg' for c in chars
@@ -300,27 +306,27 @@ def set_font_params(path: str, params: dict) -> str:
 class ErrorSuppressor:
     enable = False
 
-    def __init__(self):
+    def __init__(self) -> None:
         # copy stderr
         self.stderr_copy = os.dup(2)
 
-    def __enter__(self):
+    def __enter__(self) -> "ErrorSuppressor":
         # replace stderr with null device
         devnull = os.open(os.devnull, os.O_WRONLY)
         os.dup2(devnull, 2)
         os.close(devnull)
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
         # restore stderr
         os.dup2(self.stderr_copy, 2)
 
     @classmethod
-    def suppress(cls):
+    def suppress(cls) -> AbstractContextManager:
         return cls() if cls.enable else nullcontext()
 
 
-def parse_arguments():
+def parse_arguments() -> Namespace:
     parser = ArgumentParser(description=f"{FAMILY} Generator v{VERSION}")
     parser.add_argument(
         "-a",
@@ -371,7 +377,7 @@ def required(obj: str, paths: list) -> None:
         sys.exit(f'Error: missing required files for "{obj}"')
 
 
-def cleanup(keep_tmp_files: bool):
+def cleanup(keep_tmp_files: bool) -> None:
     # remove tmp directory
     if not keep_tmp_files and os.path.exists(TMP_DIR):
         shutil.rmtree(TMP_DIR)
