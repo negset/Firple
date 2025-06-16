@@ -8,6 +8,7 @@ import subprocess
 import sys
 from argparse import ArgumentParser, Namespace
 from contextlib import AbstractContextManager, nullcontext
+from dataclasses import dataclass, field
 
 import fontforge
 import psMat
@@ -15,55 +16,85 @@ from fontTools.ttLib import TTFont, newTable
 from settings import *
 
 
-def generate(
-    slim: bool,
-    bold: bool,
-    italic: bool,
-    nerd: bool,
-    freeze_features: list,
-) -> None:
-    params = {}
-    params["family"] = f"{FAMILY} Slim" if slim else FAMILY
-    params["weight"] = "Bold" if bold else "Regular"
-    params["subfamily"] = (params["weight"] + (" Italic" if italic else "")).replace(
-        "Regular Italic", "Italic"
-    )
-    params["name"] = f"{params['family']} {params["subfamily"]}"
-    params["name_no_spaces"] = f"{params['family']}-{params["subfamily"]}".replace(
-        " ", ""
-    )
-    params["slim"] = slim
-    params["italic"] = italic
-    params["freeze_features"] = freeze_features if freeze_features else []
+@dataclass
+class FontParams:
+    slim: bool
+    bold: bool
+    italic: bool
+    nerd: bool
+    freeze_features: list[str]
+    family: str = field(init=False)
+    weight: str = field(init=False)
+    subfamily: str = field(init=False)
+    fullname: str = field(init=False)
+    psname: str = field(init=False)
 
-    print(f'\n[{params["name"]}]')
+    def __post_init__(self):
+        self.family = f"{FAMILY} Slim" if self.slim else FAMILY
+        self.weight = "Bold" if self.bold else "Regular"
+        if self.italic:
+            if self.weight == "Regular":
+                self.subfamily = "Italic"
+            else:
+                self.subfamily = f"{self.weight} Italic"
+        else:
+            self.subfamily = self.weight
+        self.fullname = f"{self.family} {self.subfamily}"
+        self.psname = f"{self.family}-{self.subfamily}".replace(" ", "")
+
+
+class ErrorSuppressor:
+    enable = False
+
+    def __init__(self) -> None:
+        # copy stderr
+        self.stderr_copy = os.dup(2)
+
+    def __enter__(self) -> "ErrorSuppressor":
+        # replace stderr with null device
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, 2)
+        os.close(devnull)
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        # restore stderr
+        os.dup2(self.stderr_copy, 2)
+
+    @classmethod
+    def suppress(cls) -> AbstractContextManager:
+        return cls() if cls.enable else nullcontext()
+
+
+def generate(params: FontParams) -> None:
+    print(f"\n[{params.fullname}]")
     path = generate_font(params)
     path = apply_auto_hinting(path, params)
-    if nerd:
+    if params.nerd:
         path = apply_nerd_patch(path, params)
     path = set_font_params(path, params)
     print(f"Generation complete! (=> {path})")
 
 
-def generate_font(params: dict) -> str:
-    frcd_path = SRC_FILES[params["weight"]][0]
-    plex_path = SRC_FILES[params["weight"]][1]
-    out_path = f'{TMP_DIR}/{params["name_no_spaces"].replace(FAMILY, "Tmp")}.ttf'
+def generate_font(params: FontParams) -> str:
+    frcd_path = SRC_FILES[params.weight][0]
+    plex_path = SRC_FILES[params.weight][1]
+    out_path = f'{TMP_DIR}/{params.psname.replace(FAMILY, "Tmp")}.ttf'
 
     # check if src font files exist
-    required(params["name"], [frcd_path, plex_path])
+    required(params.fullname, [frcd_path, plex_path])
 
     with ErrorSuppressor.suppress():
         frcd = fontforge.open(frcd_path)
         plex = fontforge.open(plex_path)
 
-    if params["italic"]:
+    if params.italic:
         glyph_paths = {
-            c: f'{SRC_DIR}/italic/{params["weight"]}/{c}.svg' for c in ITALIC_CHARS
+            c: f"{SRC_DIR}/italic/{params.weight}/{c}.svg" for c in ITALIC_CHARS
         }
 
         # check if glyph files exist
-        required(params["name"], list(glyph_paths.values()))
+        required(params.fullname, list(glyph_paths.values()))
 
         print("Importing italic glyphs...")
         for c in ITALIC_CHARS:
@@ -71,7 +102,7 @@ def generate_font(params: dict) -> str:
             frcd[c].importOutlines(glyph_paths[c])
             frcd[c].width = frcd["A"].width
 
-    if params["slim"]:
+    if params.slim:
         print("Condensing glyphs...")
         frcd.selection.all()
         frcd.transform(psMat.scale(SLIM_SCALE, 1))
@@ -94,7 +125,7 @@ def generate_font(params: dict) -> str:
         "ss11": SS11_CHARS,
     }
     for tag, chars in tag_to_chars.items():
-        f = freeze_feature if tag in params["freeze_features"] else create_feature
+        f = freeze_feature if tag in params.freeze_features else create_feature
         f(tag, chars, frcd, plex, params)
 
     print("Transforming copied glyphs...")
@@ -112,7 +143,7 @@ def generate_font(params: dict) -> str:
         )
         glyph.width = width
 
-    if params["italic"]:
+    if params.italic:
         print("Skewing glyphs...")
         frcd.selection.all()
         frcd.unlinkReferences()
@@ -124,7 +155,7 @@ def generate_font(params: dict) -> str:
         )
 
     print("Generating temporary file...")
-    frcd.fullname = params["name"].replace(FAMILY, "Tmp")
+    frcd.fullname = params.fullname.replace(FAMILY, "Tmp")
     frcd.generate(out_path)
     frcd.close()
     plex.close()
@@ -134,17 +165,15 @@ def generate_font(params: dict) -> str:
 
 def create_feature(
     tag: str,
-    chars: list,
+    chars: list[str],
     frcd: fontforge.font,
     plex: fontforge.font,
-    params: dict,
+    params: FontParams,
 ) -> None:
     print(f"Creating {tag} feature...")
-    glyph_paths = {
-        c: f'{SRC_DIR}/{tag}/{params["weight"]}/{c}.{tag}.svg' for c in chars
-    }
+    glyph_paths = {c: f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg" for c in chars}
     # check if glyph files exist
-    required(params["name"], list(glyph_paths.values()))
+    required(params.fullname, list(glyph_paths.values()))
 
     lookup_name = f"{tag} lookup"
     subtable_name = f"{tag} lookup subtable"
@@ -174,7 +203,7 @@ def create_feature(
     for c in chars:
         g = frcd.createChar(-1, f"{c}.{tag}")
         g.importOutlines(
-            f'{SRC_DIR}/{tag}/{params["weight"]}/{c}.{tag}.svg',
+            f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg",
             scale=False,
         )
         g.width = frcd[c].width
@@ -185,30 +214,28 @@ def create_feature(
 
 def freeze_feature(
     tag: str,
-    chars: list,
+    chars: list[str],
     frcd: fontforge.font,
     plex: fontforge.font,
-    params: dict,
+    params: FontParams,
 ) -> None:
     print(f"Freezing {tag} feature...")
-    glyph_paths = {
-        c: f'{SRC_DIR}/{tag}/{params["weight"]}/{c}.{tag}.svg' for c in chars
-    }
+    glyph_paths = {c: f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg" for c in chars}
     # check if glyph files exist
-    required(params["name"], list(glyph_paths.values()))
+    required(params.fullname, list(glyph_paths.values()))
 
     for c in chars:
         w = frcd[c].width
         frcd[c].clear()
         frcd[c].importOutlines(
-            f'{SRC_DIR}/{tag}/{params["weight"]}/{c}.{tag}.svg',
+            f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg",
             scale=False,
         )
         frcd[c].transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
         frcd[c].width = w
 
 
-def apply_auto_hinting(path: str, params: dict) -> str:
+def apply_auto_hinting(path: str, params: FontParams) -> str:
     print("Hinting glyphs...")
     out_path = path.replace(".ttf", ".hinted.ttf")
     cmd = [
@@ -224,12 +251,12 @@ def apply_auto_hinting(path: str, params: dict) -> str:
     cp = subprocess.run(cmd, check=False)
     if cp.returncode != 0:
         sys.exit(
-            f'Error: ttfautohint did not finish successfully for "{params["name"]}"'
+            f'Error: ttfautohint did not finish successfully for "{params.fullname}"'
         )
     return out_path
 
 
-def apply_nerd_patch(path: str, params: dict) -> str:
+def apply_nerd_patch(path: str, params: FontParams) -> str:
     # check if nerd fonts patcher exists
     required("nerd fonts patching", [NERD_PATCHER])
 
@@ -246,20 +273,22 @@ def apply_nerd_patch(path: str, params: dict) -> str:
         "-out",
         TMP_DIR,
     ]
-    with ErrorSuppressor.suppress():
-        with subprocess.Popen(cmd, stdout=subprocess.PIPE) as proc:
+    with ErrorSuppressor.suppress(), subprocess.Popen(
+        cmd, stdout=subprocess.PIPE
+    ) as proc:
+        if proc.stdout:
             for line in proc.stdout:
                 print("| " + line.decode(), end="")
     if proc.returncode != 0:
-        sys.exit(f'Error: patcher did not finish successfully for "{params["name"]}"')
-    filename = f'TmpNerdFont-{params["subfamily"].replace(" ", "")}.ttf'
-    return f"{os.path.dirname(path)}/{filename}"
+        sys.exit(f'Error: patcher did not finish successfully for "{params.fullname}"')
+    filename = f'TmpNerdFont-{params.subfamily.replace(" ", "")}.ttf'
+    return f"{TMP_DIR}/{filename}"
 
 
-def set_font_params(path: str, params: dict) -> str:
+def set_font_params(path: str, params: FontParams) -> str:
     print("Setting font parameters...")
-    frcd = TTFont(SRC_FILES[params["weight"]][0])
-    plex = TTFont(SRC_FILES[params["weight"]][1])
+    frcd = TTFont(SRC_FILES[params.weight][0])
+    plex = TTFont(SRC_FILES[params.weight][1])
     frpl = TTFont(path)
 
     # name table
@@ -271,12 +300,12 @@ def set_font_params(path: str, params: dict) -> str:
                 plex["name"].names[0].string.decode("UTF-8"),
             ]
         ),
-        1: params["family"],
-        2: params["subfamily"],
-        3: f'{VERSION};{params["name_no_spaces"]}',
-        4: params["name"],
+        1: params.family,
+        2: params.subfamily,
+        3: f"{VERSION};{params.psname}",
+        4: params.fullname,
         5: f"Version {VERSION}",
-        6: params["name_no_spaces"],
+        6: params.psname,
     }
     for name in frpl["name"].names:
         if name.nameID in name_id_to_value:
@@ -304,47 +333,24 @@ def set_font_params(path: str, params: dict) -> str:
 
     # fix xAvgCharWidth changed by fontforge
     w = frcd["OS/2"].xAvgCharWidth
-    frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params["slim"] else w
+    frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params.slim else w
 
     # others
     frpl["OS/2"].panose.bFamilyType = 2  # Latin Text and Display
     frpl["OS/2"].panose.bProportion = 9  # Monospaced
     frpl["post"].isFixedPitch = 1  # for macOS
     frpl["head"].fontRevision = float(VERSION)
-    if params["italic"]:
+    if params.italic:
         frpl["OS/2"].fsSelection &= ~(1 << 6)  # clear REGULAR bit
         frpl["OS/2"].fsSelection |= 1 << 0  # set ITALIC bit
         frpl["post"].italicAngle = -ITALIC_SKEW
         frpl["head"].macStyle |= 1 << 1  # set Italic bit
 
-    out_path = f'{OUT_DIR}/{params["name_no_spaces"]}.ttf'
+    out_path = f"{OUT_DIR}/{params.psname}.ttf"
     frpl.save(out_path)
     frcd.close()
     frpl.close()
     return out_path
-
-
-class ErrorSuppressor:
-    enable = False
-
-    def __init__(self) -> None:
-        # copy stderr
-        self.stderr_copy = os.dup(2)
-
-    def __enter__(self) -> "ErrorSuppressor":
-        # replace stderr with null device
-        devnull = os.open(os.devnull, os.O_WRONLY)
-        os.dup2(devnull, 2)
-        os.close(devnull)
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
-        # restore stderr
-        os.dup2(self.stderr_copy, 2)
-
-    @classmethod
-    def suppress(cls) -> AbstractContextManager:
-        return cls() if cls.enable else nullcontext()
 
 
 def parse_arguments() -> Namespace:
@@ -353,7 +359,7 @@ def parse_arguments() -> Namespace:
         "-a",
         "--all",
         action="store_true",
-        help="generate all variants, weights and styles (default)",
+        help="generate all families, weights, styles (default)",
     )
     parser.add_argument(
         "-s",
@@ -371,6 +377,7 @@ def parse_arguments() -> Namespace:
     parser.add_argument(
         "--freeze-features",
         choices=["cv33", "ss11"],
+        default=[],
         nargs="*",
         help="freeze specified OpenType features",
     )
@@ -388,7 +395,7 @@ def parse_arguments() -> Namespace:
     return parser.parse_args()
 
 
-def required(obj: str, paths: list) -> None:
+def required(obj: str, paths: list[str]) -> None:
     ok = True
     for path in paths:
         if not os.path.exists(path):
@@ -420,29 +427,31 @@ if __name__ == "__main__":
     atexit.register(cleanup, args.keep_tmp_files)
 
     if args.all or args.single is None:
-        # generate all variants, weights and styles
+        # generate all families, weights, styles
         # Regular
-        generate(False, False, False, args.nerd, args.freeze_features)
+        generate(FontParams(False, False, False, args.nerd, args.freeze_features))
         # Italic
-        generate(False, False, True, args.nerd, args.freeze_features)
+        generate(FontParams(False, False, True, args.nerd, args.freeze_features))
         # Bold
-        generate(False, True, False, args.nerd, args.freeze_features)
+        generate(FontParams(False, True, False, args.nerd, args.freeze_features))
         # Bold Italic
-        generate(False, True, True, args.nerd, args.freeze_features)
+        generate(FontParams(False, True, True, args.nerd, args.freeze_features))
         # Slim Regular
-        generate(True, False, False, args.nerd, args.freeze_features)
+        generate(FontParams(True, False, False, args.nerd, args.freeze_features))
         # Slim Italic
-        generate(True, False, True, args.nerd, args.freeze_features)
+        generate(FontParams(True, False, True, args.nerd, args.freeze_features))
         # Slim Bold
-        generate(True, True, False, args.nerd, args.freeze_features)
+        generate(FontParams(True, True, False, args.nerd, args.freeze_features))
         # Slim Bold Italic
-        generate(True, True, True, args.nerd, args.freeze_features)
+        generate(FontParams(True, True, True, args.nerd, args.freeze_features))
     else:
         # generate a single font file with specified styles
         generate(
-            "slim" in args.single,
-            "bold" in args.single,
-            "italic" in args.single,
-            args.nerd,
-            args.freeze_features,
+            FontParams(
+                "slim" in args.single,
+                "bold" in args.single,
+                "italic" in args.single,
+                args.nerd,
+                args.freeze_features,
+            )
         )
