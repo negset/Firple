@@ -268,16 +268,23 @@ def apply_nerd_patch(path: str, params: FontParams) -> str:
         "-out",
         TMP_DIR,
     ]
+    last_line = None
     with ErrorSuppressor.suppress(), subprocess.Popen(
-        cmd, stdout=subprocess.PIPE
+        cmd, stdout=subprocess.PIPE, text=True, bufsize=1
     ) as proc:
-        if proc.stdout:
-            for line in proc.stdout:
-                print("| " + line.decode(), end="")
-    if proc.returncode != 0:
-        sys.exit(f'Error: patcher did not finish successfully for "{params.fullname}"')
-    filename = f'TmpNerdFont-{params.subfamily.replace(" ", "")}.ttf'
-    return f"{TMP_DIR}/{filename}"
+        assert proc.stdout is not None
+        for line in proc.stdout:
+            print(f"| {line}", end="")
+            last_line = line
+        proc.wait()
+        if proc.returncode != 0:
+            sys.exit(
+                f'Error: patcher did not finish successfully for "{params.fullname}"'
+            )
+    assert last_line is not None
+    # last_line should be "    \===> '{out_path}'"
+    out_path = last_line.split("'")[1]
+    return out_path
 
 
 def set_font_params(path: str, params: FontParams) -> str:
