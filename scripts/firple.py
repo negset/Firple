@@ -169,11 +169,27 @@ def create_feature(
 
     lookup_name = f"{code} lookup"
     subtable_name = f"{code} lookup subtable"
-    feature_script_lang = (
-        # (feature_tag, ((script_tag, (language_system_tag, ...)), ...))
-        (code, (("DFLT", ()), ("hani", ()), ("kana", ()), ("latn", ()))),
+    feature_script_lang_tuple = (
+        # In fontforge, "dflt" refers to default LangSys table.
+        # zinh (inherited) and zyyy (undetermined) should not be used as script tags,
+        # but FiraCode uses them, and without them, some features will not work in some apps.
+        (
+            code,  # feature_tag
+            (
+                ("DFLT", ("dflt",)),  # (script_tag, (language_system_tag, ...))
+                ("latn", ("dflt",)),
+                ("zinh", ("dflt",)),
+                ("zyyy", ("dflt",)),
+            ),
+        ),
     )
-    frcd.addLookup(lookup_name, "gsub_single", None, feature_script_lang)
+    frcd.addLookup(
+        lookup_name,
+        "gsub_single",
+        None,
+        feature_script_lang_tuple,
+        frcd.gsub_lookups[-1],
+    )
     frcd.addLookupSubtable(lookup_name, subtable_name)
 
     for c in chars:
