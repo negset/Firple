@@ -4,7 +4,7 @@ TMP_DIR = "./tmp"
 SRC_FILES = {
     "Regular": [
         f"{SRC_DIR}/FiraCode-Regular.ttf",
-        f"{SRC_DIR}/IBMPlexSansJP-Text.ttf",
+        f"{SRC_DIR}/IBMPlexSansJP-Regular.ttf",
     ],
     "Bold": [
         f"{SRC_DIR}/FiraCode-Bold.ttf",
@@ -42,7 +42,7 @@ SS11_CHARS = [
 FAMILY = "Firple"
 VERSION = "5.100"
 COPYRIGHT = "Copyright 2021 negset"
-PLEX_SCALE = 1.9
+PLEX_SCALE = 2.0
 ITALIC_SKEW = 12
 ITALIC_OFFSET = -100
-SLIM_SCALE = 0.8
+SLIM_SCALE = 0.85
