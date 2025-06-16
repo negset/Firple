@@ -89,15 +89,13 @@ def generate_font(params: dict) -> str:
     plex.copy()
     frcd.paste()
 
-    if "cv33" in params["freeze_features"]:
-        freeze_feature("cv33", CV33_CHARS, frcd, plex, params)
-    else:
-        create_feature("cv33", CV33_CHARS, frcd, plex, params)
-
-    if "ss11" in params["freeze_features"]:
-        freeze_feature("ss11", SS11_CHARS, frcd, plex, params)
-    else:
-        create_feature("ss11", SS11_CHARS, frcd, plex, params)
+    tag_to_chars = {
+        "cv33": CV33_CHARS,
+        "ss11": SS11_CHARS,
+    }
+    for tag, chars in tag_to_chars.items():
+        f = freeze_feature if tag in params["freeze_features"] else create_feature
+        f(tag, chars, frcd, plex, params)
 
     print("Transforming copied glyphs...")
     half_width = frcd["A"].width
@@ -135,27 +133,27 @@ def generate_font(params: dict) -> str:
 
 
 def create_feature(
-    code: str,
+    tag: str,
     chars: list,
     frcd: fontforge.font,
     plex: fontforge.font,
     params: dict,
 ) -> None:
-    print(f"Creating {code} feature...")
+    print(f"Creating {tag} feature...")
     glyph_paths = {
-        c: f'{SRC_DIR}/{code}/{params["weight"]}/{c}.{code}.svg' for c in chars
+        c: f'{SRC_DIR}/{tag}/{params["weight"]}/{c}.{tag}.svg' for c in chars
     }
     # check if glyph files exist
     required(params["name"], list(glyph_paths.values()))
 
-    lookup_name = f"{code} lookup"
-    subtable_name = f"{code} lookup subtable"
+    lookup_name = f"{tag} lookup"
+    subtable_name = f"{tag} lookup subtable"
     feature_script_lang_tuple = (
         # In fontforge, "dflt" refers to default LangSys table.
         # zinh (inherited) and zyyy (undetermined) should not be used as script tags,
         # but FiraCode uses them, and without them, some features will not work in some apps.
         (
-            code,  # feature_tag
+            tag,  # feature_tag
             (
                 ("DFLT", ("dflt",)),  # (script_tag, (language_system_tag, ...))
                 ("latn", ("dflt",)),
@@ -174,27 +172,27 @@ def create_feature(
     frcd.addLookupSubtable(lookup_name, subtable_name)
 
     for c in chars:
-        g = frcd.createChar(-1, f"{c}.{code}")
+        g = frcd.createChar(-1, f"{c}.{tag}")
         g.importOutlines(
-            f'{SRC_DIR}/{code}/{params["weight"]}/{c}.{code}.svg',
+            f'{SRC_DIR}/{tag}/{params["weight"]}/{c}.{tag}.svg',
             scale=False,
         )
         g.width = frcd[c].width
         g.transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
         frcd.selection.select(("more",), g)
-        frcd[c].addPosSub(subtable_name, f"{c}.{code}")
+        frcd[c].addPosSub(subtable_name, f"{c}.{tag}")
 
 
 def freeze_feature(
-    code: str,
+    tag: str,
     chars: list,
     frcd: fontforge.font,
     plex: fontforge.font,
     params: dict,
 ) -> None:
-    print(f"Freezing {code} feature...")
+    print(f"Freezing {tag} feature...")
     glyph_paths = {
-        c: f'{SRC_DIR}/{code}/{params["weight"]}/{c}.{code}.svg' for c in chars
+        c: f'{SRC_DIR}/{tag}/{params["weight"]}/{c}.{tag}.svg' for c in chars
     }
     # check if glyph files exist
     required(params["name"], list(glyph_paths.values()))
@@ -203,7 +201,7 @@ def freeze_feature(
         w = frcd[c].width
         frcd[c].clear()
         frcd[c].importOutlines(
-            f'{SRC_DIR}/{code}/{params["weight"]}/{c}.{code}.svg',
+            f'{SRC_DIR}/{tag}/{params["weight"]}/{c}.{tag}.svg',
             scale=False,
         )
         frcd[c].transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
@@ -304,7 +302,7 @@ def set_font_params(path: str, params: dict) -> str:
     for r in ranges:
         setattr(frpl["OS/2"], r, getattr(frcd["OS/2"], r) | getattr(plex["OS/2"], r))
 
-    # others
+    # fix xAvgCharWidth changed by fontforge
     w = frcd["OS/2"].xAvgCharWidth
     frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params["slim"] else w
 
