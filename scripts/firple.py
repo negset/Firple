@@ -38,6 +38,7 @@ def generate(
 
     print(f'\n[{params["name"]}]')
     path = generate_font(params)
+    path = apply_auto_hinting(path, params)
     if nerd:
         path = apply_nerd_patch(path, params)
     path = set_font_params(path, params)
@@ -52,6 +53,10 @@ def generate_font(params: dict) -> str:
     # check if src font files exist
     required(params["name"], [frcd_path, plex_path])
 
+    with ErrorSuppressor.suppress():
+        frcd = fontforge.open(frcd_path)
+        plex = fontforge.open(plex_path)
+
     if params["italic"]:
         glyph_paths = {
             c: f'{SRC_DIR}/italic/{params["weight"]}/{c}.svg' for c in ITALIC_CHARS
@@ -60,35 +65,11 @@ def generate_font(params: dict) -> str:
         # check if glyph files exist
         required(params["name"], list(glyph_paths.values()))
 
-        with ErrorSuppressor.suppress():
-            frcd = fontforge.open(frcd_path)
-
         print("Importing italic glyphs...")
         for c in ITALIC_CHARS:
             frcd[c].clear()
             frcd[c].importOutlines(glyph_paths[c])
             frcd[c].width = frcd["A"].width
-
-        print("Hinting glyphs...")
-        frcd.generate(out_path)
-        frcd.close()
-        cmd = [
-            "ttfautohint",
-            "--no-info",
-            "--ignore-restrictions",
-            out_path,
-            f"{out_path}.hinted",
-        ]
-        cp = subprocess.run(cmd, check=False)
-        if cp.returncode != 0:
-            sys.exit(
-                f'Error: ttfautohint did not finish successfully for "{params["name"]}"'
-            )
-        frcd_path = f"{out_path}.hinted"
-
-    with ErrorSuppressor.suppress():
-        frcd = fontforge.open(frcd_path)
-        plex = fontforge.open(plex_path)
 
     if params["slim"]:
         print("Condensing glyphs...")
@@ -229,6 +210,27 @@ def freeze_feature(
         frcd[c].width = w
 
 
+def apply_auto_hinting(path: str, params: dict) -> str:
+    print("Hinting glyphs...")
+    out_path = path.replace(".ttf", ".hinted.ttf")
+    cmd = [
+        "ttfautohint",
+        "--no-info",
+        "--ignore-restrictions",
+        "--default-script=latn",
+        "--fallback-script=none",
+        "--fallback-scaling",
+        path,
+        out_path,
+    ]
+    cp = subprocess.run(cmd, check=False)
+    if cp.returncode != 0:
+        sys.exit(
+            f'Error: ttfautohint did not finish successfully for "{params["name"]}"'
+        )
+    return out_path
+
+
 def apply_nerd_patch(path: str, params: dict) -> str:
     # check if nerd fonts patcher exists
     required("nerd fonts patching", [NERD_PATCHER])
@@ -252,7 +254,8 @@ def apply_nerd_patch(path: str, params: dict) -> str:
                 print("| " + line.decode(), end="")
     if proc.returncode != 0:
         sys.exit(f'Error: patcher did not finish successfully for "{params["name"]}"')
-    return path.replace("-", "NerdFont-")
+    filename = f'TmpNerdFont-{params["subfamily"].replace(" ", "")}.ttf'
+    return f"{os.path.dirname(path)}/{filename}"
 
 
 def set_font_params(path: str, params: dict) -> str:
