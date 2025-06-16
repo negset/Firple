@@ -307,6 +307,10 @@ def set_font_params(path: str, params: dict) -> str:
     # others
     w = frcd["OS/2"].xAvgCharWidth
     frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params["slim"] else w
+
+    # others
+    frpl["OS/2"].panose.bFamilyType = 2  # Latin Text and Display
+    frpl["OS/2"].panose.bProportion = 9  # Monospaced
     frpl["post"].isFixedPitch = 1  # for macOS
     frpl["head"].fontRevision = float(VERSION)
     if params["italic"]:
