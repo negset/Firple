@@ -92,7 +92,6 @@ def generate_font(params: FontParams) -> str:
         glyph_paths = {
             c: f"{SRC_DIR}/italic/{params.weight}/{c}.svg" for c in ITALIC_CHARS
         }
-
         # check if glyph files exist
         required(params.fullname, list(glyph_paths.values()))
 
@@ -120,11 +119,7 @@ def generate_font(params: FontParams) -> str:
     plex.copy()
     frcd.paste()
 
-    tag_to_chars = {
-        "cv33": CV33_CHARS,
-        "ss11": SS11_CHARS,
-    }
-    for tag, chars in tag_to_chars.items():
+    for tag, chars in FEATURE_CHARS.items():
         f = freeze_feature if tag in params.freeze_features else create_feature
         f(tag, chars, frcd, plex, params)
 

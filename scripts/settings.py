@@ -23,21 +23,23 @@ ITALIC_CHARS = [
     "k",
     "q",
 ]
-CV33_CHARS = ["uni3000"]
-SS11_CHARS = [
-    "uni3071",
-    "uni3074",
-    "uni3077",
-    "uni307A",
-    "uni307D",
-    "uni309C",
-    "uni30D1",
-    "uni30D4",
-    "uni30D7",
-    "uni30DA",
-    "uni30DD",
-    "uniFF9F",
-]
+FEATURE_CHARS = {
+    "cv33": ["uni3000"],
+    "ss11": [
+        "uni3071",
+        "uni3074",
+        "uni3077",
+        "uni307A",
+        "uni307D",
+        "uni309C",
+        "uni30D1",
+        "uni30D4",
+        "uni30D7",
+        "uni30DA",
+        "uni30DD",
+        "uniFF9F",
+    ],
+}
 
 FAMILY = "Firple"
 VERSION = "5.100"
