@@ -135,8 +135,8 @@ def generate_font(params: dict) -> str:
 
     if params["italic"]:
         print("Skewing glyphs...")
-        frcd.unlinkReferences()
         frcd.selection.all()
+        frcd.unlinkReferences()
         frcd.transform(
             psMat.compose(
                 psMat.translate(ITALIC_OFFSET * SLIM_SCALE, 0),
