@@ -68,7 +68,7 @@ class ErrorSuppressor:
 
 def generate(params: FontParams) -> None:
     print(f"\n[{params.fullname}]")
-    path = generate_font(params)
+    path = create_base_font(params)
     path = apply_auto_hinting(path, params)
     if params.nerd:
         path = apply_nerd_patch(path, params)
@@ -76,7 +76,7 @@ def generate(params: FontParams) -> None:
     print(f"Generation complete! (=> {path})")
 
 
-def generate_font(params: FontParams) -> str:
+def create_base_font(params: FontParams) -> str:
     frcd_path = SRC_FILES[params.weight][0]
     plex_path = SRC_FILES[params.weight][1]
     out_path = f'{TMP_DIR}/{params.psname.replace(FAMILY, "Tmp")}.ttf'
@@ -175,7 +175,7 @@ def create_feature(
     feature_script_lang_tuple = (
         # In fontforge, "dflt" refers to default LangSys table.
         # zinh (inherited) and zyyy (undetermined) should not be used as script tags,
-        # but FiraCode uses them, and without them, some features will not work in some apps.
+        # but FiraCode uses them, and some features will not work in some apps without them.
         (
             tag,  # feature_tag
             (
@@ -440,7 +440,7 @@ if __name__ == "__main__":
         # Slim Bold Italic
         generate(FontParams(True, True, True, args.nerd, args.freeze_features))
     else:
-        # generate a single font file with specified styles
+        # generate a single font file as specified
         generate(
             FontParams(
                 "slim" in args.single,
