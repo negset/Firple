@@ -1,4 +1,3 @@
-
 .DEFAULT_GOAL := all
 
 setup: scripts/downloader.py
