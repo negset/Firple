@@ -1,4 +1,4 @@
 __pycache__/
-src/*.ttf
-out/
-FontPatcher/
+/src/*.ttf
+/out/
+/FontPatcher/
