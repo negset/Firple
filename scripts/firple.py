@@ -9,6 +9,7 @@ import sys
 from argparse import ArgumentParser, Namespace
 from contextlib import AbstractContextManager, nullcontext
 from dataclasses import dataclass, field
+from typing import Self
 
 import fontforge
 import psMat
@@ -51,7 +52,7 @@ class ErrorSuppressor:
         # copy stderr
         self.stderr_copy = os.dup(2)
 
-    def __enter__(self) -> "ErrorSuppressor":
+    def __enter__(self) -> Self:
         # replace stderr with null device
         devnull = os.open(os.devnull, os.O_WRONLY)
         os.dup2(devnull, 2)
@@ -270,9 +271,10 @@ def apply_nerd_patch(path: str, params: FontParams) -> str:
         TMP_DIR,
     ]
     last_line = None
-    with ErrorSuppressor.suppress(), subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, text=True, bufsize=1
-    ) as proc:
+    with (
+        ErrorSuppressor.suppress(),
+        subprocess.Popen(cmd, stdout=subprocess.PIPE, text=True, bufsize=1) as proc,
+    ):
         assert proc.stdout is not None
         for line in proc.stdout:
             print(f"| {line}", end="")
@@ -290,82 +292,83 @@ def apply_nerd_patch(path: str, params: FontParams) -> str:
 
 def set_font_params(path: str, params: FontParams) -> str:
     print("Setting font parameters...")
-    frcd = TTFont(SRC_FILES[params.weight][0])
-    plex = TTFont(SRC_FILES[params.weight][1])
-    frpl = TTFont(path)
+    with (
+        TTFont(SRC_FILES[params.weight][0]) as frcd,
+        TTFont(SRC_FILES[params.weight][1]) as plex,
+        TTFont(path) as frpl,
+    ):
+        # name table
+        frpl["name"].names = []  # clear
+        name_id_to_value = {
+            0: "; ".join(
+                [
+                    COPYRIGHT,
+                    frcd["name"].names[0].toUnicode(),
+                    plex["name"].names[0].toUnicode(),
+                ]
+            ),
+            1: params.family,
+            2: params.subfamily,
+            3: f"{VERSION};{params.psname}",
+            4: params.fullname,
+            5: f"Version {VERSION}",
+            6: params.psname,
+        }
+        for name_id, value in name_id_to_value.items():
+            m_record = NameRecord()
+            m_record.nameID = name_id
+            m_record.platformID = 1  # Macintosh
+            m_record.platEncID = 0  # Roman
+            m_record.langID = 0  # English
+            m_record.string = value.encode(m_record.getEncoding())
+            frpl["name"].names.append(m_record)
+            w_record = NameRecord()
+            w_record.nameID = name_id
+            w_record.platformID = 3  # Windows
+            w_record.platEncID = 1  # Unicode BMP
+            w_record.langID = 0x409  # en-US
+            w_record.string = value.encode(w_record.getEncoding())
+            frpl["name"].names.append(w_record)
 
-    # name table
-    frpl["name"].names = []  # clear
-    name_id_to_value = {
-        0: "; ".join(
-            [
-                COPYRIGHT,
-                frcd["name"].names[0].toUnicode(),
-                plex["name"].names[0].toUnicode(),
-            ]
-        ),
-        1: params.family,
-        2: params.subfamily,
-        3: f"{VERSION};{params.psname}",
-        4: params.fullname,
-        5: f"Version {VERSION}",
-        6: params.psname,
-    }
-    for name_id, value in name_id_to_value.items():
-        m_record = NameRecord()
-        m_record.nameID = name_id
-        m_record.platformID = 1  # Macintosh
-        m_record.platEncID = 0  # Roman
-        m_record.langID = 0  # English
-        m_record.string = value.encode(m_record.getEncoding())
-        frpl["name"].names.append(m_record)
-        w_record = NameRecord()
-        w_record.nameID = name_id
-        w_record.platformID = 3  # Windows
-        w_record.platEncID = 1  # Unicode BMP
-        w_record.langID = 0x409  # en-US
-        w_record.string = value.encode(w_record.getEncoding())
-        frpl["name"].names.append(w_record)
+        # meta table
+        meta_table = newTable("meta")
+        meta_table.data = {
+            "dlng": "Hani, Hira, Hrkt, Jpan, Kana",  # ISO 15924
+            "slng": "Hani, Hira, Hrkt, Jpan, Kana, Latn",  # ISO 15924
+        }
+        frpl["meta"] = meta_table
 
-    # meta table
-    meta_table = newTable("meta")
-    meta_table.data = {
-        "dlng": "Hani, Hira, Hrkt, Jpan, Kana",  # ISO 15924
-        "slng": "Hani, Hira, Hrkt, Jpan, Kana, Latn",  # ISO 15924
-    }
-    frpl["meta"] = meta_table
+        # OS/2 ranges
+        ranges = [
+            "ulUnicodeRange1",
+            "ulUnicodeRange2",
+            "ulUnicodeRange3",
+            "ulUnicodeRange4",
+            "ulCodePageRange1",
+            "ulCodePageRange2",
+        ]
+        for r in ranges:
+            setattr(
+                frpl["OS/2"], r, getattr(frcd["OS/2"], r) | getattr(plex["OS/2"], r)
+            )
 
-    # OS/2 ranges
-    ranges = [
-        "ulUnicodeRange1",
-        "ulUnicodeRange2",
-        "ulUnicodeRange3",
-        "ulUnicodeRange4",
-        "ulCodePageRange1",
-        "ulCodePageRange2",
-    ]
-    for r in ranges:
-        setattr(frpl["OS/2"], r, getattr(frcd["OS/2"], r) | getattr(plex["OS/2"], r))
+        # fix xAvgCharWidth changed by fontforge
+        w = frcd["OS/2"].xAvgCharWidth
+        frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params.slim else w
 
-    # fix xAvgCharWidth changed by fontforge
-    w = frcd["OS/2"].xAvgCharWidth
-    frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params.slim else w
+        # others
+        frpl["OS/2"].panose.bFamilyType = 2  # Latin Text and Display
+        frpl["OS/2"].panose.bProportion = 9  # Monospaced
+        frpl["post"].isFixedPitch = 1
+        frpl["head"].fontRevision = float(VERSION)
+        if params.italic:
+            frpl["OS/2"].fsSelection &= ~(1 << 6)  # clear REGULAR bit
+            frpl["OS/2"].fsSelection |= 1 << 0  # set ITALIC bit
+            frpl["post"].italicAngle = -ITALIC_SKEW
+            frpl["head"].macStyle |= 1 << 1  # set Italic bit
 
-    # others
-    frpl["OS/2"].panose.bFamilyType = 2  # Latin Text and Display
-    frpl["OS/2"].panose.bProportion = 9  # Monospaced
-    frpl["post"].isFixedPitch = 1
-    frpl["head"].fontRevision = float(VERSION)
-    if params.italic:
-        frpl["OS/2"].fsSelection &= ~(1 << 6)  # clear REGULAR bit
-        frpl["OS/2"].fsSelection |= 1 << 0  # set ITALIC bit
-        frpl["post"].italicAngle = -ITALIC_SKEW
-        frpl["head"].macStyle |= 1 << 1  # set Italic bit
-
-    out_path = f"{OUT_DIR}/{params.psname}.ttf"
-    frpl.save(out_path)
-    frcd.close()
-    frpl.close()
+        out_path = f"{OUT_DIR}/{params.psname}.ttf"
+        frpl.save(out_path)
     return out_path
 
 
