@@ -45,6 +45,18 @@ class FontParams:
         self.psname = f"{self.family}-{self.subfamily}".replace(" ", "")
 
 
+class FontForgeFont:
+    def __init__(self, path) -> None:
+        with ErrorSuppressor.suppress():
+            self.font = fontforge.open(path)
+
+    def __enter__(self) -> fontforge.font:
+        return self.font
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        self.font.close()
+
+
 class ErrorSuppressor:
     enable = False
 
@@ -86,76 +98,74 @@ def create_base_font(params: FontParams) -> str:
     # check if src font files exist
     required(params.fullname, [frcd_path, plex_path])
 
-    with ErrorSuppressor.suppress():
-        frcd = fontforge.open(frcd_path)
-        plex = fontforge.open(plex_path)
+    with (
+        FontForgeFont(frcd_path) as frcd,
+        FontForgeFont(plex_path) as plex,
+    ):
+        if params.italic:
+            glyph_paths = {
+                c: f"{SRC_DIR}/italic/{params.weight}/{c}.svg" for c in ITALIC_CHARS
+            }
+            # check if glyph files exist
+            required(params.fullname, list(glyph_paths.values()))
 
-    if params.italic:
-        glyph_paths = {
-            c: f"{SRC_DIR}/italic/{params.weight}/{c}.svg" for c in ITALIC_CHARS
-        }
-        # check if glyph files exist
-        required(params.fullname, list(glyph_paths.values()))
+            print("Importing italic glyphs...")
+            for c in ITALIC_CHARS:
+                frcd[c].clear()
+                frcd[c].importOutlines(glyph_paths[c])
+                frcd[c].width = frcd["A"].width
 
-        print("Importing italic glyphs...")
-        for c in ITALIC_CHARS:
-            frcd[c].clear()
-            frcd[c].importOutlines(glyph_paths[c])
-            frcd[c].width = frcd["A"].width
+        if params.slim:
+            print("Condensing glyphs...")
+            frcd.selection.all()
+            frcd.transform(psMat.scale(SLIM_SCALE, 1))
 
-    if params.slim:
-        print("Condensing glyphs...")
-        frcd.selection.all()
-        frcd.transform(psMat.scale(SLIM_SCALE, 1))
+        print("Copying glyphs...")
+        plex.selection.none()
+        frcd.selection.none()
+        for i in range(sys.maxunicode + 1):
+            is_plex_preferred = chr(i) in PLEX_PREFERRED_CHARS
+            if is_plex_preferred or (i in plex and i not in frcd):
+                plex.selection.select(("more",), i)
+                frcd.selection.select(("more",), i)
+            if is_plex_preferred:
+                frcd[i].unlinkThisGlyph()
+        plex.copy()
+        frcd.paste()
 
-    print("Copying glyphs...")
-    plex.selection.none()
-    frcd.selection.none()
-    for i in range(sys.maxunicode + 1):
-        is_plex_preferred = chr(i) in PLEX_PREFERRED_CHARS
-        if is_plex_preferred or (i in plex and i not in frcd):
-            plex.selection.select(("more",), i)
-            frcd.selection.select(("more",), i)
-        if is_plex_preferred:
-            frcd[i].unlinkThisGlyph()
-    plex.copy()
-    frcd.paste()
+        for tag, chars in FEATURE_CHARS.items():
+            f = freeze_feature if tag in params.freeze_features else create_feature
+            f(tag, chars, frcd, plex, params)
 
-    for tag, chars in FEATURE_CHARS.items():
-        f = freeze_feature if tag in params.freeze_features else create_feature
-        f(tag, chars, frcd, plex, params)
-
-    print("Transforming copied glyphs...")
-    half_width = frcd["A"].width
-    full_width = half_width * 2
-    for glyph in frcd.selection.byGlyphs:
-        scaled = glyph.width * PLEX_SCALE
-        width = full_width if scaled > half_width else half_width
-        offset = (width - scaled) / 2
-        glyph.transform(
-            psMat.compose(
-                psMat.scale(PLEX_SCALE),
-                psMat.translate(offset, 0),
+        print("Transforming copied glyphs...")
+        half_width = frcd["A"].width
+        full_width = half_width * 2
+        for glyph in frcd.selection.byGlyphs:
+            scaled = glyph.width * PLEX_SCALE
+            width = full_width if scaled > half_width else half_width
+            offset = (width - scaled) / 2
+            glyph.transform(
+                psMat.compose(
+                    psMat.scale(PLEX_SCALE),
+                    psMat.translate(offset, 0),
+                )
             )
-        )
-        glyph.width = width
+            glyph.width = width
 
-    if params.italic:
-        print("Skewing glyphs...")
-        frcd.selection.all()
-        frcd.unlinkReferences()
-        frcd.transform(
-            psMat.compose(
-                psMat.translate(ITALIC_OFFSET * SLIM_SCALE, 0),
-                psMat.skew(math.radians(ITALIC_SKEW)),
+        if params.italic:
+            print("Skewing glyphs...")
+            frcd.selection.all()
+            frcd.unlinkReferences()
+            frcd.transform(
+                psMat.compose(
+                    psMat.translate(ITALIC_OFFSET * SLIM_SCALE, 0),
+                    psMat.skew(math.radians(ITALIC_SKEW)),
+                )
             )
-        )
 
-    print("Generating temporary file...")
-    frcd.fullname = params.fullname.replace(FAMILY, "Tmp")
-    frcd.generate(out_path)
-    frcd.close()
-    plex.close()
+        print("Generating temporary file...")
+        frcd.fullname = params.fullname.replace(FAMILY, "Tmp")
+        frcd.generate(out_path)
 
     return out_path
 
