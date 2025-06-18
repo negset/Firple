@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 import fontforge
 import psMat
 from fontTools.ttLib import TTFont, newTable
+from fontTools.ttLib.tables._n_a_m_e import NameRecord
 from settings import *
 
 
@@ -282,7 +283,7 @@ def apply_nerd_patch(path: str, params: FontParams) -> str:
                 f'Error: patcher did not finish successfully for "{params.fullname}"'
             )
     assert last_line is not None
-    # last_line should be "    \===> '{out_path}'"
+    # last_line should be "    \===> 'out_path'"
     out_path = last_line.split("'")[1]
     return out_path
 
@@ -294,12 +295,13 @@ def set_font_params(path: str, params: FontParams) -> str:
     frpl = TTFont(path)
 
     # name table
+    frpl["name"].names = []  # clear
     name_id_to_value = {
-        0: "\n".join(
+        0: "; ".join(
             [
                 COPYRIGHT,
-                frcd["name"].names[0].string.decode("UTF-16BE"),
-                plex["name"].names[0].string.decode("UTF-8"),
+                frcd["name"].names[0].toUnicode(),
+                plex["name"].names[0].toUnicode(),
             ]
         ),
         1: params.family,
@@ -309,9 +311,21 @@ def set_font_params(path: str, params: FontParams) -> str:
         5: f"Version {VERSION}",
         6: params.psname,
     }
-    for name in frpl["name"].names:
-        if name.nameID in name_id_to_value:
-            name.string = name_id_to_value[name.nameID].encode("UTF-16BE")
+    for name_id, value in name_id_to_value.items():
+        m_record = NameRecord()
+        m_record.nameID = name_id
+        m_record.platformID = 1  # Macintosh
+        m_record.platEncID = 0  # Roman
+        m_record.langID = 0  # English
+        m_record.string = value.encode(m_record.getEncoding())
+        frpl["name"].names.append(m_record)
+        w_record = NameRecord()
+        w_record.nameID = name_id
+        w_record.platformID = 3  # Windows
+        w_record.platEncID = 1  # Unicode BMP
+        w_record.langID = 0x409  # en-US
+        w_record.string = value.encode(w_record.getEncoding())
+        frpl["name"].names.append(w_record)
 
     # meta table
     meta_table = newTable("meta")
@@ -340,7 +354,7 @@ def set_font_params(path: str, params: FontParams) -> str:
     # others
     frpl["OS/2"].panose.bFamilyType = 2  # Latin Text and Display
     frpl["OS/2"].panose.bProportion = 9  # Monospaced
-    frpl["post"].isFixedPitch = 1  # for macOS
+    frpl["post"].isFixedPitch = 1
     frpl["head"].fontRevision = float(VERSION)
     if params.italic:
         frpl["OS/2"].fsSelection &= ~(1 << 6)  # clear REGULAR bit
