@@ -314,7 +314,7 @@ def set_font_params(path: str, params: FontParams) -> str:
     ):
         # name table
         frpl["name"].names = []  # clear
-        name_id_to_value = {
+        name_id_value_map = {
             0: "; ".join(
                 [
                     COPYRIGHT,
@@ -329,7 +329,7 @@ def set_font_params(path: str, params: FontParams) -> str:
             5: f"Version {VERSION}",
             6: params.psname,
         }
-        for name_id, value in name_id_to_value.items():
+        for name_id, value in name_id_value_map.items():
             m_record = NameRecord()
             m_record.nameID = name_id
             m_record.platformID = 1  # Macintosh
@@ -384,6 +384,7 @@ def set_font_params(path: str, params: FontParams) -> str:
 
         out_path = f"{OUT_DIR}/{params.psname}.ttf"
         frpl.save(out_path)
+
     return out_path
 
 
@@ -430,12 +431,12 @@ def parse_arguments() -> Namespace:
 
 
 def required(obj: str, paths: list[str]) -> None:
-    ok = True
+    missing = False
     for path in paths:
         if not os.path.exists(path):
             print(f'file not found: "{path}"', file=sys.stderr)
-            ok = False
-    if not ok:
+            missing = True
+    if missing:
         sys.exit(f'Error: missing required files for "{obj}"')
 
 
