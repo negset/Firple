@@ -157,9 +157,10 @@ def create_base_font(params: FontParams) -> str:
             print("Skewing glyphs...")
             frcd.selection.all()
             frcd.unlinkReferences()
+            offset = ITALIC_OFFSET * SLIM_SCALE if params.slim else ITALIC_OFFSET
             frcd.transform(
                 psMat.compose(
-                    psMat.translate(ITALIC_OFFSET * SLIM_SCALE, 0),
+                    psMat.translate(offset, 0),
                     psMat.skew(math.radians(ITALIC_SKEW)),
                 )
             )
