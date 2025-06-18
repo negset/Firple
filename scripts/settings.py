@@ -42,7 +42,7 @@ FEATURE_CHARS = {
 }
 
 FAMILY = "Firple"
-VERSION = "5.100"
+VERSION = "6.000"
 COPYRIGHT = "Copyright 2021 negset"
 PLEX_SCALE = 2.0
 ITALIC_SKEW = 12
