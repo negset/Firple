@@ -185,8 +185,8 @@ def create_feature(
     lookup_name = f"{tag} lookup"
     subtable_name = f"{tag} lookup subtable"
     feature_script_lang_tuple = (
-        # In fontforge, "dflt" refers to default LangSys table.
-        # zinh (inherited) and zyyy (undetermined) should not be used as script tags,
+        # In FontForge, "dflt" refers to default LangSys table.
+        # "zinh" (inherited) and "zyyy" (undetermined) should not be used as script tags,
         # but FiraCode uses them, and some features will not work in some apps without them.
         (
             tag,  # feature_tag
@@ -362,7 +362,7 @@ def set_font_params(path: str, params: FontParams) -> str:
                 frpl["OS/2"], r, getattr(frcd["OS/2"], r) | getattr(plex["OS/2"], r)
             )
 
-        # fix xAvgCharWidth changed by fontforge
+        # fix xAvgCharWidth changed by FontForge
         w = frcd["OS/2"].xAvgCharWidth
         frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params.slim else w
 
@@ -419,7 +419,7 @@ def parse_arguments() -> Namespace:
         "--show-fontforge-error",
         dest="suppress_error",
         action="store_false",
-        help="show fontforge error messages",
+        help="show FontForge error messages",
     )
     return parser.parse_args()
 
