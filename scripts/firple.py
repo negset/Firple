@@ -87,7 +87,7 @@ def generate(params: FontParams) -> None:
     if params.nerd:
         path = apply_nerd_patch(path, params)
     path = set_font_params(path, params)
-    print(f"Generation complete! (=> {path})")
+    print(f"Generation complete! => {path}")
 
 
 def create_base_font(params: FontParams) -> str:
@@ -133,6 +133,7 @@ def create_base_font(params: FontParams) -> str:
         plex.copy()
         frcd.paste()
 
+        print("Creating features...")
         for tag, chars in FEATURE_CHARS.items():
             f = freeze_feature if tag in params.freeze_features else create_feature
             f(tag, chars, frcd, plex, params)
@@ -177,7 +178,7 @@ def create_feature(
     plex: fontforge.font,
     params: FontParams,
 ) -> None:
-    print(f"Creating {tag} feature...")
+    print(f"| Creating {tag} feature...")
     glyph_paths = {c: f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg" for c in chars}
     # check if glyph files exist
     required(params.fullname, list(glyph_paths.values()))
@@ -226,7 +227,7 @@ def freeze_feature(
     plex: fontforge.font,
     params: FontParams,
 ) -> None:
-    print(f"Freezing {tag} feature...")
+    print(f"| Freezing {tag} feature...")
     glyph_paths = {c: f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg" for c in chars}
     # check if glyph files exist
     required(params.fullname, list(glyph_paths.values()))
