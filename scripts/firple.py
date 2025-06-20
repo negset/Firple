@@ -74,6 +74,7 @@ class ErrorSuppressor:
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         # restore stderr
         os.dup2(self.stderr_copy, 2)
+        os.close(self.stderr_copy)
 
     @classmethod
     def suppress(cls) -> AbstractContextManager:
