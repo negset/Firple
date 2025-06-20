@@ -9,7 +9,7 @@ import sys
 from argparse import ArgumentParser, Namespace
 from contextlib import AbstractContextManager, nullcontext
 from dataclasses import dataclass, field
-from typing import Self
+from typing import Iterable, Self
 
 import fontforge
 import psMat
@@ -107,7 +107,7 @@ def create_base_font(params: FontParams) -> str:
                 c: f"{SRC_DIR}/italic/{params.weight}/{c}.svg" for c in ITALIC_CHARS
             }
             # check if glyph files exist
-            required(params.fullname, list(glyph_paths.values()))
+            required(params.fullname, glyph_paths.values())
 
             print("Importing italic glyphs...")
             for c in ITALIC_CHARS:
@@ -182,7 +182,7 @@ def create_feature(
     print(f"| Creating {tag} feature...")
     glyph_paths = {c: f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg" for c in chars}
     # check if glyph files exist
-    required(params.fullname, list(glyph_paths.values()))
+    required(params.fullname, glyph_paths.values())
 
     lookup_name = f"{tag} lookup"
     subtable_name = f"{tag} lookup subtable"
@@ -231,7 +231,7 @@ def freeze_feature(
     print(f"| Freezing {tag} feature...")
     glyph_paths = {c: f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg" for c in chars}
     # check if glyph files exist
-    required(params.fullname, list(glyph_paths.values()))
+    required(params.fullname, glyph_paths.values())
 
     for c in chars:
         w = frcd[c].width
@@ -411,7 +411,7 @@ def parse_arguments() -> Namespace:
     )
     parser.add_argument(
         "--freeze-features",
-        choices=["cv33", "ss11"],
+        choices=FEATURE_CHARS.keys(),
         default=[],
         nargs="*",
         help="freeze specified OpenType features",
@@ -430,7 +430,7 @@ def parse_arguments() -> Namespace:
     return parser.parse_args()
 
 
-def required(obj: str, paths: list[str]) -> None:
+def required(obj: str, paths: Iterable[str]) -> None:
     missing = False
     for path in paths:
         if not os.path.exists(path):
