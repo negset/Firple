@@ -9,6 +9,7 @@ import sys
 from argparse import ArgumentParser, Namespace
 from contextlib import AbstractContextManager, nullcontext
 from dataclasses import dataclass, field
+from fractions import Fraction
 from typing import Iterable, Self
 
 import fontforge
@@ -382,6 +383,10 @@ def set_font_params(path: str, params: FontParams) -> str:
             frpl["OS/2"].fsSelection |= 1 << 0  # set ITALIC bit
             frpl["post"].italicAngle = -ITALIC_SKEW
             frpl["head"].macStyle |= 1 << 1  # set Italic bit
+            frac = Fraction(math.tan(math.radians(ITALIC_SKEW))).limit_denominator(1000)
+            frpl["hhea"].caretSlopeRise = frac.denominator
+            frpl["hhea"].caretSlopeRun = frac.numerator
+            frpl["hhea"].caretOffset = ITALIC_OFFSET
 
         out_path = f"{OUT_DIR}/{params.psname}.ttf"
         frpl.save(out_path)
