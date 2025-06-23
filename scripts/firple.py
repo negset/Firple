@@ -85,13 +85,13 @@ class ErrorSuppressor:
 
 
 def generate(params: FontParams) -> None:
-    print(f"\n[{params.fullname}]")
+    print(f"[{params.fullname}]")
     path = create_base_font(params)
     path = apply_auto_hinting(path, params)
     if params.nerd:
         path = apply_nerd_patch(path, params)
     path = set_font_params(path, params)
-    print(f"Generation complete! => {path}")
+    print(f"Generation complete! => {path}\n")
 
 
 def create_base_font(params: FontParams) -> str:
@@ -399,7 +399,7 @@ def set_font_params(path: str, params: FontParams) -> str:
 
 
 def parse_arguments() -> Namespace:
-    parser = ArgumentParser(description=f"{FAMILY} Generator v{VERSION}")
+    parser = ArgumentParser()
     parser.add_argument(
         "-a",
         "--all",
@@ -463,7 +463,7 @@ def cleanup(keep_tmp_files: bool) -> None:
 
 
 if __name__ == "__main__":
-    print(f"{FAMILY} v{VERSION}")
+    print(f"{FAMILY} v{VERSION}\n")
 
     args = parse_arguments()
 
