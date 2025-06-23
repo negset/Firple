@@ -212,6 +212,7 @@ pre.sample-text .toggle.on::before {
 
 .preview-config {
   margin: 0.5rem 0;
+  user-select: none;
 }
 
 .preview-config:last-of-type {
