@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := all
 
 setup: scripts/downloader.py
-	./scripts/downloader.py --all
+	python3 ./scripts/downloader.py --all
 
 all: scripts/firple.py
 	python3 scripts/firple.py --all
