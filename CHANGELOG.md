@@ -1,4 +1,4 @@
-## Version 6.000
+## Version 6.000 (2025/06/19)
 
 - 日本語文字のサイズを僅かに拡大 (1900 -> 2000)
 - 日本語文字のウェイトを変更 (Text -> Regular)
@@ -14,7 +14,7 @@
   - IBM Plex Sans JP (TrueType/hinted) Version 1.002
   - Nerd Fonts v3.4.0
 
-## Version 5.100
+## Version 5.100 (2025/04/30)
 
 - IBM Plex Sans のバージョンを更新
 - Nerd Fonts のバージョンを更新
@@ -23,7 +23,7 @@
   - IBM Plex Sans JP (TrueType/hinted) Version 1.002
   - Nerd Fonts v3.4.0
 
-## Version 5.000
+## Version 5.000 (2024/10/08)
 
 - 全角スペース表示機能を追加 (`cv33`)
 - 半濁点強調機能を追加 (`ss11`)
@@ -35,7 +35,7 @@
   - IBM Plex Sans JP (TrueType/hinted) Version 1.001
   - Nerd Fonts v3.2.1
 
-## Version 4.000
+## Version 4.000 (2023/06/28)
 
 - Nerd Fonts 対応
 - 生成スクリプトを更新
@@ -44,7 +44,7 @@
   - Fira Code Version 6.002
   - IBM Plex Sans JP (TrueType/hinted) Version 1.001
 
-## Version 3.000
+## Version 3.000 (2023/01/21)
 
 - Slim ファミリーを追加
 - グリフ変形処理を軽量化
@@ -54,12 +54,12 @@
   - Fira Code Version 6.002
   - IBM Plex Sans JP (TrueType/hinted) Version 1.001
 
-## Version 2.101
+## Version 2.101 (2022/02/21)
 
 - 半角かぎ括弧 (`｢`, `｣`) のグリフが不自然に大きい問題の修正
 - バージョン表記の修正
 
-## Version 2.000
+## Version 2.000 (2021/12/19)
 
 - イタリック体を追加
 - macOS で等幅フォントとして認識されない問題の修正
