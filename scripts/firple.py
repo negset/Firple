@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import atexit
+import itertools
 import math
 import os
 import shutil
@@ -26,6 +27,7 @@ class FontParams:
     italic: bool
     nerd: bool
     freeze_features: list[str]
+    ext: str
     family: str = field(init=False)
     weight: str = field(init=False)
     subfamily: str = field(init=False)
@@ -388,7 +390,9 @@ def set_font_params(path: str, params: FontParams) -> str:
             frpl["hhea"].caretSlopeRun = frac.numerator
             frpl["hhea"].caretOffset = ITALIC_OFFSET
 
-        out_path = f"{OUT_DIR}/{params.psname}.ttf"
+        out_path = f"{OUT_DIR}/{params.psname}.{params.ext}"
+        if params.ext == "woff" or params.ext == "woff2":
+            frpl.flavor = params.ext
         frpl.save(out_path)
 
     return out_path
@@ -421,6 +425,12 @@ def parse_arguments() -> Namespace:
         default=[],
         nargs="*",
         help="freeze specified OpenType features",
+    )
+    parser.add_argument(
+        "--ext",
+        choices=["ttf", "otf", "woff", "woff2"],
+        default="ttf",
+        help="extension of the font to be output",
     )
     parser.add_argument(
         "--keep-tmp-files",
@@ -469,30 +479,26 @@ if __name__ == "__main__":
 
     if args.all or args.single is None:
         # generate all families, weights, styles
-        # Regular
-        generate(FontParams(False, False, False, args.nerd, args.freeze_features))
-        # Italic
-        generate(FontParams(False, False, True, args.nerd, args.freeze_features))
-        # Bold
-        generate(FontParams(False, True, False, args.nerd, args.freeze_features))
-        # Bold Italic
-        generate(FontParams(False, True, True, args.nerd, args.freeze_features))
-        # Slim Regular
-        generate(FontParams(True, False, False, args.nerd, args.freeze_features))
-        # Slim Italic
-        generate(FontParams(True, False, True, args.nerd, args.freeze_features))
-        # Slim Bold
-        generate(FontParams(True, True, False, args.nerd, args.freeze_features))
-        # Slim Bold Italic
-        generate(FontParams(True, True, True, args.nerd, args.freeze_features))
+        for slim, bold, italic in itertools.product([False, True], repeat=3):
+            generate(
+                FontParams(
+                    slim=slim,
+                    bold=bold,
+                    italic=italic,
+                    nerd=args.nerd,
+                    freeze_features=args.freeze_features,
+                    ext=args.ext,
+                )
+            )
     else:
         # generate a single font file as specified
         generate(
             FontParams(
-                "slim" in args.single,
-                "bold" in args.single,
-                "italic" in args.single,
-                args.nerd,
-                args.freeze_features,
+                slim="slim" in args.single,
+                bold="bold" in args.single,
+                italic="italic" in args.single,
+                nerd=args.nerd,
+                freeze_features=args.freeze_features,
+                ext=args.ext,
             )
         )
