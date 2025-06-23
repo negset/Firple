@@ -3,7 +3,7 @@
 [Fira Code](https://github.com/tonsky/FiraCode) と [IBM Plex Sans JP](https://github.com/IBM/plex) を
 合成したプログラミング向け日本語フォントです。
 
-![Firple サンプル](https://github.com/negset/Firple/raw/images/sample-top.png)
+![Firple サンプル](https://github.com/negset/Firple/raw/sample-images/sample-top.webp)
 
 ## ダウンロード
 
@@ -60,7 +60,7 @@ OpenType features による字形の変更に対応しています。
 
   半濁点を強調して、濁点と判別しやすくします。
 
-![OpenType features サンプル](https://github.com/negset/Firple/raw/images/sample-features.png)
+![OpenType features サンプル](https://github.com/negset/Firple/raw/sample-images/sample-features.webp)
 
 ## フォントファミリー
 
