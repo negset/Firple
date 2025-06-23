@@ -1,0 +1,86 @@
+name: Build, Release, Update images
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install -y fontforge python3-fontforge fonttools ttfautohint
+
+      - name: Generate fonts
+        run: make setup && make all
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firple-ttfs
+          path: out/*.ttf
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: firple-ttfs
+
+      - name: Package artifacts
+        run: zip Firple.zip Firple-*.ttf && zip FirpleSlim.zip FirpleSlim-*.ttf
+
+      - name: Create GitHub release (draft)
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: |
+            Firple.zip
+            FirpleSlim.zip
+
+  update-images:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout sample-images branch
+        uses: actions/checkout@v4
+        with:
+          ref: sample-images
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: firple-ttfs
+
+      - name: Install fonts
+        run: sudo mv Firple*.ttf /usr/share/fonts/ && fc-cache -fv
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Set up svg-to-webp
+        run: |
+          git clone https://github.com/negset/svg-to-webp.git
+          cd svg-to-webp
+          npm install
+
+      - name: Create WebPs
+        run: node svg-to-webp *.svg
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add *.webp
+          git commit -m "update images" || echo "No changes to commit"
+          git push origin sample-images
