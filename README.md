@@ -92,7 +92,7 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
 
 ## ライセンス
 
-[SIL Open Font License (OFL) Version 1.1](https://github.com/negset/Firple/blob/master/LICENSE.txt)
+[SIL Open Font License (OFL) Version 1.1](https://github.com/negset/Firple/blob/master/LICENSE)
 
 ## ビルド
 
