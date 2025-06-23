@@ -1,0 +1,52 @@
+name: Build web fonts, Update GitHub pages
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-web-fonts:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install -y fontforge python3-fontforge fonttools ttfautohint
+
+      - name: Generate web fonts
+        run: make setup && make web
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firple-woff2s
+          path: out/*.woff2
+
+  update-gh-pages:
+    runs-on: ubuntu-latest
+    needs: build-web-fonts
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: firple-woff2s
+          path: fonts/
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add fonts/*
+          git commit -m "update fonts" || echo "No changes to commit"
+          git push origin gh-pages
