@@ -7,6 +7,7 @@ import os
 import shutil
 import subprocess
 import sys
+import unicodedata
 from argparse import ArgumentParser, Namespace
 from contextlib import AbstractContextManager, nullcontext
 from dataclasses import dataclass, field
@@ -15,6 +16,7 @@ from typing import Iterable, Self
 
 import fontforge
 import psMat
+from fontforge import unicodeFromName
 from fontTools.ttLib import TTFont, newTable
 from fontTools.ttLib.tables._n_a_m_e import NameRecord
 from settings import *
@@ -124,28 +126,45 @@ def create_base_font(params: FontParams) -> str:
             frcd.selection.all()
             frcd.transform(psMat.scale(SLIM_SCALE, 1))
 
-        print("Copying glyphs...")
-        plex.selection.none()
+        print("Merging fonts...")
+        changed_slots_before_copy = {slot for slot in frcd.selection.changed()}
+        # clear Plex prefered glyphs
         frcd.selection.none()
-        for i in range(sys.maxunicode + 1):
-            is_plex_preferred = chr(i) in PLEX_PREFERRED_CHARS
-            if is_plex_preferred or (i in plex and i not in frcd):
-                plex.selection.select(("more",), i)
-                frcd.selection.select(("more",), i)
-            if is_plex_preferred:
-                frcd[i].unlinkThisGlyph()
-        plex.copy()
-        frcd.paste()
+        for name in PLEX_PREFERRED_GLYPHS:
+            frcd[name].unlinkThisGlyph()
+            frcd.selection.select(("more",), name)
+        frcd.clear()
+        # merge
+        frcd.mergeFonts(plex, False)
+        # copy altuni
+        for glyph in plex.glyphs():
+            if glyph.glyphname in frcd and glyph.altuni is not None:
+                frcd[glyph.glyphname].altuni = glyph.altuni
 
         print("Creating features...")
         for tag, chars in FEATURE_CHARS.items():
             f = freeze_feature if tag in params.freeze_features else create_feature
-            f(tag, chars, frcd, plex, params)
+            f(tag, names, frcd, plex, params)
+
+        print("Fixing scripts and languages of all features...")
+        for lookup in frcd.gsub_lookups + frcd.gpos_lookups:
+            _, _, old_feature_script_lang_tuple = frcd.getLookupInfo(lookup)
+            if not old_feature_script_lang_tuple:
+                continue
+            # In FontForge, "dflt" refers to default LangSys table.
+            new_feature_script_lang_tuple = tuple(
+                (tag, (("DFLT", ("dflt",)),))
+                for tag, _ in old_feature_script_lang_tuple
+            )
+            frcd.lookupSetFeatureList(lookup, new_feature_script_lang_tuple)
 
         print("Transforming copied glyphs...")
         half_width = frcd["A"].width
         full_width = half_width * 2
-        for glyph in frcd.selection.byGlyphs:
+        changed_slots_after_copy = {slot for slot in frcd.selection.changed()}
+        copied_slots = changed_slots_after_copy - changed_slots_before_copy
+        for slot in copied_slots:
+            glyph = frcd[slot]
             scaled = glyph.width * PLEX_SCALE
             width = full_width if scaled > half_width else half_width
             offset = (width - scaled) / 2
@@ -171,7 +190,9 @@ def create_base_font(params: FontParams) -> str:
 
         print("Generating temporary file...")
         frcd.fullname = params.fullname.replace(FAMILY, "Tmp")
-        frcd.generate(out_path)
+        # supress "Lookup subtable contains unused glyph..."
+        with ErrorSuppressor.suppress():
+            frcd.generate(out_path)
 
     return out_path
 
@@ -190,20 +211,7 @@ def create_feature(
 
     lookup_name = f"{tag} lookup"
     subtable_name = f"{tag} lookup subtable"
-    feature_script_lang_tuple = (
-        # In FontForge, "dflt" refers to default LangSys table.
-        # "zinh" (inherited) and "zyyy" (undetermined) should not be used as script tags,
-        # but FiraCode uses them, and some features will not work in some apps without them.
-        (
-            tag,  # feature_tag
-            (
-                ("DFLT", ("dflt",)),  # (script_tag, (language_system_tag, ...))
-                ("latn", ("dflt",)),
-                ("zinh", ("dflt",)),
-                ("zyyy", ("dflt",)),
-            ),
-        ),
-    )
+    feature_script_lang_tuple = ((tag, (("DFLT", ("dflt",)),)),)
     frcd.addLookup(
         lookup_name,
         "gsub_single",
@@ -372,8 +380,36 @@ def set_font_params(path: str, params: FontParams) -> str:
             )
 
         # fix xAvgCharWidth changed by FontForge
-        w = frcd["OS/2"].xAvgCharWidth
-        frpl["OS/2"].xAvgCharWidth = int(w * SLIM_SCALE) if params.slim else w
+        original_width = frcd["OS/2"].xAvgCharWidth
+        frpl["OS/2"].xAvgCharWidth = (
+            int(original_width * SLIM_SCALE) if params.slim else original_width
+        )
+
+        # GSUB table
+        gsub = frpl["GSUB"].table
+        feature_records = gsub.FeatureList.FeatureRecord
+        # remove Plex latin ligatures
+        for feature_record in feature_records:
+            if feature_record.FeatureTag != "liga":
+                continue
+            for lookup_index in feature_record.Feature.LookupListIndex:
+                lookup = gsub.LookupList.Lookup[lookup_index]
+                for subtable in lookup.SubTable:
+                    # Remove elements whose key (first letter of the ligature) is latin letter.
+                    # If the key is something like "f.italic", it will be judged by "f".
+                    new_ligatures = {
+                        key: value
+                        for key, value in subtable.ligatures.items()
+                        if not "LATIN"
+                        in unicodedata.name(chr(unicodeFromName(key.split(".")[0])))
+                    }
+                    subtable.ligatures = new_ligatures
+        # remove ital feature
+        gsub.FeatureList.FeatureRecord = [
+            feature_record
+            for feature_record in feature_records
+            if feature_record.FeatureTag != "ital"
+        ]
 
         # others
         frpl["OS/2"].panose.bFamilyType = 2  # Latin Text and Display
