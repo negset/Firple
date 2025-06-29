@@ -120,7 +120,7 @@ def create_base_font(params: FontParams) -> str:
             for name in ITALIC_GLYPHS:
                 glyph = frcd[name]
                 glyph.clear()
-                glyph.importOutlines(glyph_paths[name])
+                glyph.importOutlines(glyph_paths[name], scale=False)
                 glyph.width = frcd["A"].width
 
         if params.slim:
