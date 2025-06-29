@@ -10,4 +10,4 @@ web: scripts/firple.py
 	python3 scripts/firple.py --all --disable-nerd-fonts --ext woff2
 
 clean:
-	rm -rf FontPatcher/ out/* scripts/__pycache__/ src/*.ttf tmp/
+	rm -rf out/ scripts/__pycache__/ tmp/
