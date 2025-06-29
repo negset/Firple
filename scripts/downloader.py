@@ -10,7 +10,7 @@ from zipfile import ZipFile
 from settings import SRC_FILES
 
 FRCD_URL = "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
-PLEX_URL = "https://github.com/IBM/plex/releases/download/%40ibm%2Fplex-sans-jp%401.1.0/ibm-plex-sans-jp.zip"
+PLEX_URL = "https://github.com/IBM/plex/releases/download/%40ibm%2Fplex-sans-jp%402.0.0/ibm-plex-sans-jp.zip"
 NERD_URL = (
     "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FontPatcher.zip"
 )
