@@ -1,6 +1,10 @@
-SRC_DIR = "./src"
-OUT_DIR = "./out"
-TMP_DIR = "./tmp"
+FAMILY = "Firple"
+VERSION = "6.100"
+COPYRIGHT = "Copyright 2021 negset"
+
+SRC_DIR = "src"
+OUT_DIR = "out"
+TMP_DIR = "tmp"
 SRC_FILES = {
     "Regular": [
         f"{SRC_DIR}/FiraCode-Regular.ttf",
@@ -13,38 +17,27 @@ SRC_FILES = {
 }
 NERD_PATCHER = f"{SRC_DIR}/FontPatcher/font-patcher"
 
-PLEX_PREFERRED_CHARS = ["「", "」"]
-ITALIC_CHARS = [
-    "a",
-    "b",
-    "e",
-    "f",
-    "g",
-    "k",
-    "q",
-]
-FEATURE_CHARS = {
-    "cv33": ["uni3000"],
-    "ss11": [
-        "uni3071",
-        "uni3074",
-        "uni3077",
-        "uni307A",
-        "uni307D",
-        "uni309C",
-        "uni30D1",
-        "uni30D4",
-        "uni30D7",
-        "uni30DA",
-        "uni30DD",
-        "uniFF9F",
-    ],
-}
-
-FAMILY = "Firple"
-VERSION = "6.000"
-COPYRIGHT = "Copyright 2021 negset"
 PLEX_SCALE = 2.0
 ITALIC_SKEW = 12
 ITALIC_OFFSET = -100
 SLIM_SCALE = 0.85
+
+ITALIC_GLYPHS = ["a", "b", "e", "f", "g", "k", "q"]
+PLEX_PREFERRED_GLYPHS = ["uni300C", "uni300D"]  # "「", "」"
+FEATURE_GLYPHS = {
+    "cv33": ["uni3000"],
+    "ss11": [
+        "uni3071",  # "ぱ"
+        "uni3074",  # "ぴ"
+        "uni3077",  # "ぷ"
+        "uni307A",  # "ぺ"
+        "uni307D",  # "ぽ"
+        "uni309C",  # "゜"
+        "uni30D1",  # "パ"
+        "uni30D4",  # "ピ"
+        "uni30D7",  # "プ"
+        "uni30DA",  # "ペ"
+        "uni30DD",  # "ポ"
+        "uniFF9F",  # "ﾟ"
+    ],
+}

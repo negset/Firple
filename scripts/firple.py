@@ -110,16 +110,18 @@ def create_base_font(params: FontParams) -> str:
     ):
         if params.italic:
             glyph_paths = {
-                c: f"{SRC_DIR}/italic/{params.weight}/{c}.svg" for c in ITALIC_CHARS
+                name: f"{SRC_DIR}/italic/{params.weight}/{name}.svg"
+                for name in ITALIC_GLYPHS
             }
             # check if glyph files exist
             required(params.fullname, glyph_paths.values())
 
             print("Importing italic glyphs...")
-            for c in ITALIC_CHARS:
-                frcd[c].clear()
-                frcd[c].importOutlines(glyph_paths[c])
-                frcd[c].width = frcd["A"].width
+            for name in ITALIC_GLYPHS:
+                glyph = frcd[name]
+                glyph.clear()
+                glyph.importOutlines(glyph_paths[name])
+                glyph.width = frcd["A"].width
 
         if params.slim:
             print("Condensing glyphs...")
@@ -142,7 +144,12 @@ def create_base_font(params: FontParams) -> str:
                 frcd[glyph.glyphname].altuni = glyph.altuni
 
         print("Creating features...")
-        for tag, chars in FEATURE_CHARS.items():
+        for tag, names in FEATURE_GLYPHS.items():
+            # check if glyph files exist
+            glyph_paths = (
+                f"{SRC_DIR}/{tag}/{params.weight}/{name}.{tag}.svg" for name in names
+            )
+            required(params.fullname, glyph_paths)
             f = freeze_feature if tag in params.freeze_features else create_feature
             f(tag, names, frcd, plex, params)
 
@@ -199,16 +206,12 @@ def create_base_font(params: FontParams) -> str:
 
 def create_feature(
     tag: str,
-    chars: list[str],
+    glyph_names: list[str],
     frcd: fontforge.font,
     plex: fontforge.font,
     params: FontParams,
 ) -> None:
     print(f"| Creating {tag} feature...")
-    glyph_paths = {c: f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg" for c in chars}
-    # check if glyph files exist
-    required(params.fullname, glyph_paths.values())
-
     lookup_name = f"{tag} lookup"
     subtable_name = f"{tag} lookup subtable"
     feature_script_lang_tuple = ((tag, (("DFLT", ("dflt",)),)),)
@@ -221,39 +224,38 @@ def create_feature(
     )
     frcd.addLookupSubtable(lookup_name, subtable_name)
 
-    for c in chars:
-        g = frcd.createChar(-1, f"{c}.{tag}")
-        g.importOutlines(
-            f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg",
+    for name in glyph_names:
+        src_glyph = frcd[frcd.findEncodingSlot(unicodeFromName(name))]
+        dst_name = f"{name}.{tag}"
+        glyph = frcd.createChar(-1, dst_name)
+        glyph.importOutlines(
+            f"{SRC_DIR}/{tag}/{params.weight}/{dst_name}.svg",
             scale=False,
         )
-        g.width = frcd[c].width
-        g.transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
-        frcd.selection.select(("more",), g)
-        frcd[c].addPosSub(subtable_name, f"{c}.{tag}")
+        glyph.width = src_glyph.width
+        glyph.transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
+        frcd.selection.select(("more",), glyph)
+        src_glyph.addPosSub(subtable_name, dst_name)
 
 
 def freeze_feature(
     tag: str,
-    chars: list[str],
+    glyph_names: list[str],
     frcd: fontforge.font,
     plex: fontforge.font,
     params: FontParams,
 ) -> None:
     print(f"| Freezing {tag} feature...")
-    glyph_paths = {c: f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg" for c in chars}
-    # check if glyph files exist
-    required(params.fullname, glyph_paths.values())
-
-    for c in chars:
-        w = frcd[c].width
-        frcd[c].clear()
-        frcd[c].importOutlines(
-            f"{SRC_DIR}/{tag}/{params.weight}/{c}.{tag}.svg",
+    for name in glyph_names:
+        glyph = frcd[frcd.findEncodingSlot(unicodeFromName(name))]
+        original_width = glyph.width
+        glyph.clear()
+        glyph.importOutlines(
+            f"{SRC_DIR}/{tag}/{params.weight}/{name}.{tag}.svg",
             scale=False,
         )
-        frcd[c].transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
-        frcd[c].width = w
+        glyph.width = original_width
+        glyph.transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
 
 
 def apply_auto_hinting(path: str, params: FontParams) -> str:
@@ -427,7 +429,7 @@ def set_font_params(path: str, params: FontParams) -> str:
             frpl["hhea"].caretOffset = ITALIC_OFFSET
 
         out_path = f"{OUT_DIR}/{params.psname}.{params.ext}"
-        if params.ext == "woff" or params.ext == "woff2":
+        if params.ext in ["woff", "woff2"]:
             frpl.flavor = params.ext
         frpl.save(out_path)
 
@@ -457,7 +459,7 @@ def parse_arguments() -> Namespace:
     )
     parser.add_argument(
         "--freeze-features",
-        choices=FEATURE_CHARS.keys(),
+        choices=FEATURE_GLYPHS.keys(),
         default=[],
         nargs="*",
         help="freeze specified OpenType features",
