@@ -11,7 +11,7 @@ SRC_FILES = {
         f"{SRC_DIR}/IBMPlexSansJP-Bold.ttf",
     ],
 }
-NERD_PATCHER = "./FontPatcher/font-patcher"
+NERD_PATCHER = f"{SRC_DIR}/FontPatcher/font-patcher"
 
 PLEX_PREFERRED_CHARS = ["「", "」"]
 ITALIC_CHARS = [

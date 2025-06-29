@@ -1,5 +1,5 @@
 __pycache__/
-/FontPatcher/
 /out/
+/src/FontPatcher/
 /src/*.ttf
 /tmp/
