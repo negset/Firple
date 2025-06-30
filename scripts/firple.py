@@ -130,14 +130,14 @@ def create_base_font(params: FontParams) -> str:
 
         print("Merging fonts...")
         changed_slots_before_copy = {slot for slot in frcd.selection.changed()}
-        # clear Plex prefered glyphs
+        # clear Plex prefered glyphs in advance
         frcd.selection.none()
         for name in PLEX_PREFERRED_GLYPHS:
             frcd[name].unlinkThisGlyph()
             frcd.selection.select(("more",), name)
         frcd.clear()
         # merge
-        frcd.mergeFonts(plex, False)
+        frcd.mergeFonts(plex, False)  # preserveCrossFontKerning = False
         # copy altuni
         for glyph in plex.glyphs():
             if glyph.glyphname in frcd and glyph.altuni is not None:
@@ -225,7 +225,7 @@ def create_feature(
     frcd.addLookupSubtable(lookup_name, subtable_name)
 
     for name in glyph_names:
-        src_glyph = frcd[frcd.findEncodingSlot(unicodeFromName(name))]
+        src_glyph = frcd[frcd.findEncodingSlot(name)]
         dst_name = f"{name}.{tag}"
         glyph = frcd.createChar(-1, dst_name)
         glyph.importOutlines(
@@ -247,7 +247,7 @@ def freeze_feature(
 ) -> None:
     print(f"| Freezing {tag} feature...")
     for name in glyph_names:
-        glyph = frcd[frcd.findEncodingSlot(unicodeFromName(name))]
+        glyph = frcd[frcd.findEncodingSlot(name)]
         original_width = glyph.width
         glyph.clear()
         glyph.importOutlines(
