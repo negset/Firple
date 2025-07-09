@@ -201,33 +201,35 @@ def copy_glyphs(
     # copy glyphs
     plex.selection.none()
     frcd.selection.none()
-    for slot in range(len(plex)):  # pylint: disable=consider-using-enumerate
-        print(f"\r| {int(round(100 * (slot + 1) / len(plex)))}%", end="")
-        # within Unicode range
-        if slot <= sys.maxunicode:
-            if slot not in plex or slot in frcd:
+    total_glyphs = len(list(plex))
+    for glyph in plex.glyphs():
+        print(f"\r| {glyph.originalgid + 1} / {total_glyphs}", end="")
+        if glyph.unicode >= 0:
+            if glyph.unicode in frcd:
+                # skip if slot conflicts
                 continue
-            plex.selection.select(("encoding", "more"), slot)
-            frcd.selection.select(("encoding", "more"), slot)
-        # outside Unicode range
+            plex.selection.select(("more", "unicode"), glyph.unicode)
+            frcd.selection.select(("more", "unicode"), glyph.unicode)
         else:
-            if plex[slot].glyphname in frcd:
+            if glyph.glyphname in frcd:
                 # skip if name conflicts
                 continue
-            if any(s in plex[slot].glyphname for s in (".italic", ".prop")):
-                # skip unneeded glyph
-                continue
-            if ".alt" in plex[slot].glyphname:
-                if plex[slot].glyphname.split(".")[0] in frcd:
-                    # skip if original of .alt is in FiraCode
-                    continue
-            plex.selection.select(("encoding", "more"), slot)
-            glyph = frcd.createMappedChar(len(frcd))
-            glyph.glyphname = plex[slot].glyphname
-            frcd.selection.select(("encoding", "more"), glyph.encoding)
-    print("\r| Done!")
+            plex.selection.select(("more", "encoding"), glyph.encoding)
+            frcd_glyph = frcd.createMappedChar(len(frcd))
+            frcd_glyph.glyphname = glyph.glyphname
+            frcd.selection.select(("more", "encoding"), frcd_glyph.encoding)
     plex.copy()
     frcd.paste()
+
+    # copy name and altuni
+    for slot in plex.selection:
+        if slot > sys.maxunicode:
+            break
+        frcd[slot].glyphname = plex[slot].glyphname
+        if plex[slot].altuni:
+            frcd[slot].altuni = plex[slot].altuni
+
+    print("")
     return [slot for slot in frcd.selection]
 
 
@@ -235,12 +237,11 @@ def copy_lookups(
     frcd: fontforge.font,
     plex: fontforge.font,
 ) -> None:
-    for slot in range(len(plex)):  # pylint: disable=consider-using-enumerate
-        print(f"\r| {int(round(100 * (slot + 1) / len(plex)))}%", end="")
-        if slot not in plex:
-            continue
-        for lookup in plex[slot].getPosSub("*"):
-            subtable_name, lookup_type, *data = lookup
+    total_glyphs = len(list(plex))
+    for glyph in plex.glyphs():
+        print(f"\r| {glyph.originalgid + 1} / {total_glyphs}", end="")
+        slot = glyph.unicode if glyph.unicode >= 0 else glyph.encoding
+        for subtable_name, lookup_type, *data in glyph.getPosSub("*"):
             if lookup_type in ["Position", "Pair"]:
                 # skip gpos lookup
                 continue
@@ -259,15 +260,12 @@ def copy_lookups(
                     # check if all ligature component is copied
                     for variant_name in data:
                         variant_glyph = plex[variant_name]
-                        unicodes = [variant_glyph.unicode] + (
-                            [u for u, _, _ in variant_glyph.altuni]
-                            if variant_glyph.altuni
-                            else []
+                        variant_glyph_slot = (
+                            variant_glyph.unicode
+                            if variant_glyph.unicode >= 0
+                            else variant_glyph.encoding
                         )
-                        if not (
-                            variant_glyph.encoding in plex.selection
-                            or all(unicode in plex.selection for unicode in unicodes)
-                        ):
+                        if variant_glyph_slot not in plex.selection:
                             ligature_component_not_copied = True
                             break
                     # skip if ligature component is not copied
@@ -278,25 +276,23 @@ def copy_lookups(
                     frcd.addLookupSubtable(lookup_name, subtable_name)
                 except OSError:
                     pass  # already exists
-                key = slot if slot <= sys.maxunicode else plex[slot].glyphname
+                key = glyph.unicode if glyph.unicode >= 0 else glyph.glyphname
                 frcd[key].addPosSub(
                     subtable_name, data[0] if len(data) == 1 else tuple(data)
                 )
-            # glyph in not copied
+            # glyph is not copied
             else:
                 for variant_name in data:
                     variant_glyph = plex[variant_name]
-                    unicodes = [variant_glyph.unicode] + (
-                        [u for u, _, _ in variant_glyph.altuni]
-                        if variant_glyph.altuni
-                        else []
+                    variant_glyph_slot = (
+                        variant_glyph.unicode
+                        if variant_glyph.unicode >= 0
+                        else variant_glyph.encoding
                     )
                     # variant glyph is copied
-                    if variant_glyph.encoding in plex.selection or any(
-                        unicode in plex.selection for unicode in unicodes
-                    ):
+                    if variant_glyph_slot in plex.selection:
                         # copy lookup if glyph exists in FiraCode
-                        key = slot if slot <= sys.maxunicode else plex[slot].glyphname
+                        key = glyph.unicode if glyph.unicode >= 0 else glyph.glyphname
                         if key in frcd:
                             try:
                                 frcd.addLookup(
@@ -309,7 +305,7 @@ def copy_lookups(
                                 subtable_name,
                                 data[0] if len(data) == 1 else tuple(data),
                             )
-    print("\r| Done!")
+    print("")
 
 
 def create_feature(
