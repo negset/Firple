@@ -218,7 +218,10 @@ def copy_glyphs(
     for glyph in plex.glyphs():
         print(f"\r| {glyph.originalgid + 1} / {total_glyphs}", end="")
         if glyph.unicode >= 0:
-            if glyph.unicode in frcd:
+            unicodes = {glyph.unicode}
+            if glyph.altuni:
+                unicodes |= {u for u, _, _ in glyph.altuni}
+            if any(u in frcd for u in unicodes):
                 # skip if slot conflicts
                 continue
             plex.selection.select(("more", "unicode"), glyph.unicode)
