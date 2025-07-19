@@ -130,7 +130,7 @@ def create_base_font(params: FontParams) -> str:
             frcd.transform(psMat.scale(SLIM_SCALE, 1))
 
         print("Copying glyphs...")
-        copied_slots = copy_glyphs(frcd, plex)
+        copied_glyph_names = copy_glyphs(frcd, plex)
 
         print("Copying lookups...")
         copy_lookups(frcd, plex)
@@ -143,7 +143,7 @@ def create_base_font(params: FontParams) -> str:
             )
             required(params.fullname, glyph_paths)
             f = freeze_feature if tag in params.freeze_features else create_feature
-            copied_slots += f(tag, names, frcd, plex, params)
+            copied_glyph_names += f(tag, names, frcd, plex, params)
 
         print("Fixing scripts and languages of all features...")
         for lookup in frcd.gsub_lookups + frcd.gpos_lookups:
@@ -156,8 +156,8 @@ def create_base_font(params: FontParams) -> str:
         print("Transforming copied glyphs...")
         half_width = frcd["A"].width
         full_width = half_width * 2
-        for slot in copied_slots:
-            glyph = frcd[slot]
+        for name in copied_glyph_names:
+            glyph = frcd[name]
             scaled = glyph.width * PLEX_SCALE
             width = full_width if scaled > half_width else half_width
             offset = (width - scaled) / 2
@@ -187,13 +187,26 @@ def create_base_font(params: FontParams) -> str:
         with ErrorSuppressor.suppress():
             frcd.generate(out_path)
 
+        print("Generating hint control file...")
+        control_file_path = f"{TMP_DIR}/{params.psname}-control.txt"
+        non_latin_glyphs = ", ".join(
+            name
+            for name in copied_glyph_names
+            if fontforge.scriptFromUnicode(
+                fontforge.unicodeFromName(name.split(".")[0])
+            )
+            != "latn"
+        )
+        with open(control_file_path, "w", encoding="UTF-8") as f:
+            print(f"none dflt @ {non_latin_glyphs}", file=f)
+
     return out_path
 
 
 def copy_glyphs(
     frcd: fontforge.font,
     plex: fontforge.font,
-) -> list[int]:
+) -> list[str]:
     # remove Plex prefered glyphs in advance
     for name in PLEX_PREFERRED_GLYPHS:
         frcd[name].unlinkThisGlyph()
@@ -230,7 +243,7 @@ def copy_glyphs(
             frcd[slot].altuni = plex[slot].altuni
 
     print("")
-    return [slot for slot in frcd.selection]
+    return [frcd[slot].glyphname for slot in frcd.selection]
 
 
 def copy_lookups(
@@ -314,9 +327,8 @@ def create_feature(
     frcd: fontforge.font,
     plex: fontforge.font,
     params: FontParams,
-) -> list[int]:
+) -> list[str]:
     print(f"| Creating {tag} feature...")
-    slots = []
     lookup_name = f"{tag} lookup"
     subtable_name = f"{tag} lookup subtable"
     frcd.addLookup(
@@ -328,19 +340,22 @@ def create_feature(
     )
     frcd.addLookupSubtable(lookup_name, subtable_name)
 
+    variant_names = []
     for name in glyph_names:
-        src_glyph = frcd[frcd.findEncodingSlot(name)]
-        dst_name = f"{name}.{tag}"
-        glyph = frcd.createChar(-1, dst_name)
-        glyph.importOutlines(
-            f"{SRC_DIR}/{tag}/{params.weight}/{dst_name}.svg",
+        glyph = frcd[frcd.findEncodingSlot(name)]
+        variant_name = f"{name}.{tag}"
+        variant_glyph = frcd.createChar(-1, variant_name)
+        variant_glyph.importOutlines(
+            f"{SRC_DIR}/{tag}/{params.weight}/{variant_name}.svg",
             scale=False,
         )
-        glyph.width = src_glyph.width
-        glyph.transform(psMat.translate(0, plex.ascent - frcd.ascent))  # fix y gap
-        src_glyph.addPosSub(subtable_name, dst_name)
-        slots.append(glyph.encoding)
-    return slots
+        variant_glyph.width = glyph.width
+        variant_glyph.transform(
+            psMat.translate(0, plex.ascent - frcd.ascent)
+        )  # fix y gap
+        glyph.addPosSub(subtable_name, variant_name)
+        variant_names.append(variant_name)
+    return variant_names
 
 
 def freeze_feature(
@@ -349,7 +364,7 @@ def freeze_feature(
     frcd: fontforge.font,
     plex: fontforge.font,
     params: FontParams,
-) -> list[int]:
+) -> list[str]:
     print(f"| Freezing {tag} feature...")
     for name in glyph_names:
         glyph = frcd[frcd.findEncodingSlot(name)]
@@ -379,6 +394,7 @@ def apply_auto_hinting(path: str, params: FontParams) -> str:
         "--default-script=latn",
         "--fallback-script=none",
         "--fallback-scaling",
+        f"--control-file={TMP_DIR}/{params.psname}-control.txt",
         path,
         out_path,
     ]
