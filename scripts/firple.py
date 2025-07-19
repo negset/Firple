@@ -158,16 +158,23 @@ def create_base_font(params: FontParams) -> str:
         full_width = half_width * 2
         for name in copied_glyph_names:
             glyph = frcd[name]
-            scaled = glyph.width * PLEX_SCALE
-            width = full_width if scaled > half_width else half_width
-            offset = (width - scaled) / 2
+            if glyph.width == 500:
+                new_width = half_width
+            elif glyph.width == 1000:
+                new_width = full_width
+            else:
+                actual_width = (
+                    glyph.width - glyph.left_side_bearing - glyph.right_side_bearing
+                ) * PLEX_SCALE
+                new_width = full_width if actual_width > half_width else half_width
+            offset = (new_width - glyph.width * PLEX_SCALE) / 2
             glyph.transform(
                 psMat.compose(
                     psMat.scale(PLEX_SCALE),
                     psMat.translate(offset, 0),
                 )
             )
-            glyph.width = width
+            glyph.width = new_width
 
         if params.italic:
             print("Skewing glyphs...")
