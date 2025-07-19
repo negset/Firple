@@ -22,9 +22,9 @@ ITALIC_SKEW = 12
 ITALIC_OFFSET = -100
 SLIM_SCALE = 0.85
 
-ITALIC_GLYPHS = ["a", "b", "e", "f", "g", "k", "q"]
-PLEX_PREFERRED_GLYPHS = ["uni300C", "uni300D"]  # "「", "」"
-FEATURE_GLYPHS = {
+ITALIC_GLYPH_NAMES = ["a", "b", "e", "f", "g", "k", "q"]
+OVERWRITE_GLYPH_NAMES = ["uni300C", "uni300D"]  # "「", "」"
+FEATURE_GLYPH_NAMES = {
     "cv33": ["uni3000"],
     "ss11": [
         "uni3071",  # "ぱ"

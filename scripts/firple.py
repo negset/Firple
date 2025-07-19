@@ -112,13 +112,13 @@ def create_base_font(params: FontParams) -> str:
         if params.italic:
             glyph_paths = {
                 name: f"{SRC_DIR}/italic/{params.weight}/{name}.svg"
-                for name in ITALIC_GLYPHS
+                for name in ITALIC_GLYPH_NAMES
             }
             # check if glyph files exist
             required(params.fullname, glyph_paths.values())
 
             print("Importing italic glyphs...")
-            for name in ITALIC_GLYPHS:
+            for name in ITALIC_GLYPH_NAMES:
                 glyph = frcd[name]
                 glyph.clear()
                 glyph.importOutlines(glyph_paths[name], scale=False)
@@ -136,7 +136,7 @@ def create_base_font(params: FontParams) -> str:
         copy_lookups(frcd, plex)
 
         print("Creating features...")
-        for tag, names in FEATURE_GLYPHS.items():
+        for tag, names in FEATURE_GLYPH_NAMES.items():
             # check if glyph files exist
             glyph_paths = (
                 f"{SRC_DIR}/{tag}/{params.weight}/{name}.{tag}.svg" for name in names
@@ -208,7 +208,7 @@ def copy_glyphs(
     plex: fontforge.font,
 ) -> list[str]:
     # remove Plex prefered glyphs in advance
-    for name in PLEX_PREFERRED_GLYPHS:
+    for name in OVERWRITE_GLYPH_NAMES:
         frcd[name].unlinkThisGlyph()
         frcd.removeGlyph(name)
     # copy glyphs
@@ -560,7 +560,7 @@ def parse_arguments() -> Namespace:
     )
     parser.add_argument(
         "--freeze-features",
-        choices=FEATURE_GLYPHS.keys(),
+        choices=FEATURE_GLYPH_NAMES.keys(),
         default=[],
         nargs="*",
         help="freeze specified OpenType features",
