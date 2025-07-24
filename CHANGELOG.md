@@ -1,3 +1,15 @@
+## Version 6.100 (2025/07/24)
+
+- IBM Plex Sans JP を更新 (1.002 -> 1.003)
+  - これに伴い日本語文字の収録数が大幅に増加
+- IBM Plex Sans JP のフォント機能を移植
+  - 異字体 (`jp78`, `jp83` 等) や任意の合字 (`dlig`) が使用可能に
+- 一部グリフに誤ってヒンティングが付与されていた問題を修正
+- ベースフォント
+  - Fira Code Version 6.002
+  - IBM Plex Sans JP (TrueType/hinted) Version 1.003
+  - Nerd Fonts v3.4.0
+
 ## Version 6.000 (2025/06/19)
 
 - 日本語文字のサイズを僅かに拡大 (1900 -> 2000)
