@@ -19,7 +19,7 @@ jobs:
         run: |
           response=$(curl -s https://api.github.com/repos/negset/Firple/releases/latest)
           asset_urls=$(echo $response | jq -r '.assets[] | .browser_download_url')
-          wget asset_urls
+          wget $asset_urls
 
       - name: Install fonts
         run: |
