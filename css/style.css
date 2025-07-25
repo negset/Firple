@@ -1,12 +1,14 @@
 @font-face {
   font-family: "Firple";
   font-weight: 400;
+  font-display: swap;
   src: url("../fonts/Firple-Regular.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Firple";
   font-weight: 700;
+  font-display: swap;
   src: url("../fonts/Firple-Bold.woff2") format("woff2");
 }
 
@@ -14,6 +16,7 @@
   font-family: "Firple";
   font-weight: 400;
   font-style: italic;
+  font-display: swap;
   src: url("../fonts/Firple-Italic.woff2") format("woff2");
 }
 
@@ -21,18 +24,21 @@
   font-family: "Firple";
   font-weight: 700;
   font-style: italic;
+  font-display: swap;
   src: url("../fonts/Firple-BoldItalic.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Firple Slim";
   font-weight: 400;
+  font-display: swap;
   src: url("../fonts/FirpleSlim-Regular.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Firple Slim";
   font-weight: 700;
+  font-display: swap;
   src: url("../fonts/FirpleSlim-Bold.woff2") format("woff2");
 }
 
@@ -40,6 +46,7 @@
   font-family: "Firple Slim";
   font-weight: 400;
   font-style: italic;
+  font-display: swap;
   src: url("../fonts/FirpleSlim-Italic.woff2") format("woff2");
 }
 
@@ -47,6 +54,7 @@
   font-family: "Firple Slim";
   font-weight: 700;
   font-style: italic;
+  font-display: swap;
   src: url("../fonts/FirpleSlim-BoldItalic.woff2") format("woff2");
 }
 
