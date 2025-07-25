@@ -56,11 +56,13 @@ OpenType features による字形の変更に対応しています。
 
   全角スペースを可視化して、意図せぬ混入を防ぎます。
 
+  ![cv33 サンプル](https://github.com/negset/Firple/raw/sample-images/sample-feature-cv33.webp)
+
 - 半濁点の強調 (`ss11`)
 
   半濁点を強調して、濁点と判別しやすくします。
 
-![OpenType features サンプル](https://github.com/negset/Firple/raw/sample-images/sample-features.webp)
+  ![ss11 サンプル](https://github.com/negset/Firple/raw/sample-images/sample-feature-ss11.webp)
 
 ## フォントファミリー
 
