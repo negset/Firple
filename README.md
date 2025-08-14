@@ -90,7 +90,7 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
 
 ## サンプル
 
-[こちら](https://negset.com/Firple/#sample) で任意のテキストの表示を確認できます。
+[こちら](https://negset.com/Firple/#preview) で任意のテキストの表示を確認できます。
 
 ## ライセンス
 
