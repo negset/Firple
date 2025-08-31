@@ -20,7 +20,8 @@ from fontTools.ttLib import TTFont, newTable
 from fontTools.ttLib.tables._n_a_m_e import NameRecord
 from settings import *
 
-type FeatureData = tuple[str, tuple[tuple[str, tuple[str]]]]
+# (feature, ((script, (lang, ...)), ...))
+type FeatureData = tuple[str, tuple[tuple[str, tuple[str, ...]], ...]]
 
 
 @dataclass
@@ -148,6 +149,12 @@ def create_base_font(params: FontParams) -> str:
         print("Fixing scripts and languages of all features...")
         for lookup in frcd.gsub_lookups + frcd.gpos_lookups:
             _, _, old_feature_data_tuple = frcd.getLookupInfo(lookup)
+            if not old_feature_data_tuple:
+                # skip no-tag lookup (single substitution, ligature substitution)
+                continue
+            if old_feature_data_tuple[0][0] == "locl":
+                # skip 'locl' lookup
+                continue
             new_feature_data_tuple = tuple(
                 feature_data_from_tag(tag) for tag, _ in old_feature_data_tuple
             )
@@ -284,7 +291,7 @@ def copy_lookups(
                 continue
             # glyph is copied
             if slot in plex.selection:
-                if feature_tag == "liga":
+                if lookup_type == "Ligature":
                     ligature_component_not_copied = False
                     # check if all ligature component is copied
                     for variant_name in data:
@@ -397,7 +404,13 @@ def freeze_feature(
 
 def feature_data_from_tag(tag: str) -> FeatureData:
     # In FontForge, "dflt" refers to default LangSys table.
-    return (tag, (("DFLT", ("dflt",)),))
+    return (
+        tag,
+        (
+            ("DFLT", ("dflt",)),
+            ("latn", ("dflt",)),
+        ),
+    )
 
 
 def apply_auto_hinting(path: str, params: FontParams) -> str:
