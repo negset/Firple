@@ -1,5 +1,5 @@
 FAMILY = "Firple"
-VERSION = "6.100"
+VERSION = "6.200"
 COPYRIGHT = "Copyright 2021 negset"
 
 SRC_DIR = "src"
