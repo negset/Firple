@@ -238,12 +238,6 @@ def copy_glyphs(
             if any(u in frcd for u in unicodes):
                 # skip if slot conflicts
                 continue
-            if all(
-                fontforge.scriptFromUnicode(glyph.unicode) != s
-                for s in ["hani", "kana", "DFLT"]
-            ):
-                # skip non-Japanese glyphs
-                continue
             plex.selection.select(("more", "unicode"), glyph.unicode)
             frcd.selection.select(("more", "unicode"), glyph.unicode)
         else:
