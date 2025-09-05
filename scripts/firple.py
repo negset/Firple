@@ -630,7 +630,7 @@ def cleanup(keep_tmp_files: bool) -> None:
         shutil.rmtree(TMP_DIR)
 
 
-if __name__ == "__main__":
+def main():
     print(f"{FAMILY} v{VERSION}\n")
 
     args = parse_arguments()
@@ -670,3 +670,7 @@ if __name__ == "__main__":
                 ext=args.ext,
             )
         )
+
+
+if __name__ == "__main__":
+    main()
