@@ -1,3 +1,11 @@
+## Version 6.300 (2025/09/05)
+
+- 全角英字が含まれていない問題を修正
+- ベースフォント
+  - Fira Code Version 6.002
+  - IBM Plex Sans JP (TrueType/hinted) Version 1.003
+  - Nerd Fonts v3.4.0
+
 ## Version 6.200 (2025/08/31)
 
 - 意図しないリガチャが有効になる不具合を修正 ([#7](https://github.com/negset/Firple/issues/7))
