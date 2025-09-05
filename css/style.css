@@ -72,15 +72,6 @@ pre,
   box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
 }
 
-@media screen and (min-width: 1200px) {
-  .navbar,
-  .main,
-  .footer {
-    padding-left: calc((100% - 1200px) / 2);
-    padding-right: calc((100% - 1200px) / 2);
-  }
-}
-
 .navbar-burger::before {
   font-family: 'remixicon' !important;
   font-style: normal;
@@ -124,6 +115,16 @@ pre,
   text-align: center;
   padding-top: 2rem;
   padding-bottom: 2rem;
+}
+
+@media screen and (min-width: 1200px) {
+
+  .navbar,
+  .main,
+  .footer {
+    padding-left: calc((100% - 1200px) / 2);
+    padding-right: calc((100% - 1200px) / 2);
+  }
 }
 
 .button {
@@ -190,50 +191,18 @@ h3.title::before {
   content: "\EB7B";
 }
 
-pre.sample-text {
-  font-size: 2rem;
-  padding: 1rem 2rem;
-  line-height: 1.2em;
-  white-space: nowrap;
-}
-
-pre.sample-text .toggle::before {
-  font-family: "remixicon", "Firple" !important;
-  font-style: normal;
-  font-size: .4em;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
-  width: 4rem;
-  vertical-align: 16%;
-}
-
-pre.sample-text .toggle.off::before {
-  content: "\F219  OFF";
-  color: hsl(348, 100%, 61%);
-}
-
-pre.sample-text .toggle.on::before {
-  content: "\F218  ON";
-  color: hsl(141, 71%, 48%);
-}
-
-.preview-config {
-  margin: 0.5rem 0;
+.field>label {
   user-select: none;
 }
 
-.preview-config:last-of-type {
-  margin-bottom: 1rem;
+.field>label + label {
+  margin-left: 1rem;
 }
 
-.preview-config>label {
-  margin-right: 1rem;
-}
-
-.preview-text.textarea {
+.textarea#preview-text {
   font-family: "Firple";
   padding: 1rem;
+  margin-top: 2rem;
   font-size: 20px;
   line-height: 1.5em;
   height: 240px;

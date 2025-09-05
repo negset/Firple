@@ -11,8 +11,8 @@
   <meta name="description" content="プログラミング向け日本語フォント「Firple」公式サイトです。">
   <meta name="pinterest" content="nopin">
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -39,12 +39,12 @@
 
       <div class="navbar-end">
         <div class="navbar-item">
-          <div class="buttons">
-            <a class="button is-link" href="https://github.com/negset/Firple" target="_blank">
-              <span class="icon"><i class="ri-github-fill"></i></span>
-              <span>star</span>
-            </a>
-          </div>
+          <a class="button" href="https://github.com/negset/Firple" target="_blank">
+            <span class="icon is-large">
+              <i class="ri-github-fill is-size-5"></i>
+            </span>
+            <span>GitHub</span>
+          </a>
         </div>
       </div>
     </div>
@@ -74,7 +74,8 @@
           Fira Code が提供するプログラミング向けのリガチャ (合字) が利用できます。
         </p>
         <p>
-          さらに Firple 独自の<strong>イタリック体</strong>や<strong>長体</strong>、OpenType features による<strong>字形切り替え</strong>を提供しています。
+          さらに Firple 独自の<strong>イタリック体</strong>や<strong>長体</strong>、OpenType features
+          による<strong>字形切り替え</strong>を提供しています。
         </p>
         <img src="https://github.com/negset/Firple/raw/sample-images/sample-top.webp" alt="Firple サンプル">
       </div>
@@ -204,49 +205,49 @@
           テキストは自由に変更できます。<br>
           (Web プレビューでは Nerd Fonts に対応していません。)
         </p>
-        <div class="preview-config select">
-          <select id="subfamily">
-            <option value="firple">Firple</option>
-            <option value="firple-slim">Firple Slim</option>
-          </select>
-        </div>
-        <div class="preview-config">
-          <label for="weight">
-            <span id="weight-text"></span>
-            <input type="range" id="weight" min="10" max="50">
-          </label>
-        </div>
-        <div class="preview-config">
-          <label for="bold" style="font-weight: bold">
-            <input type="checkbox" id="bold">
-            Bold
-          </label>
-          <label for="italic" style="font-style: italic">
-            <input type="checkbox" id="italic">
-            Italic
-          </label>
-        </div>
-        <div class="preview-config">
-          <label for="ligature">
-            <input type="checkbox" id="ligature" checked>
-            リガチャを有効にする
-          </label>
-        </div>
-        <div class="preview-config">
-          <label for="cv33">
-            <input type="checkbox" id="cv33">
-            <code>cv33</code> 全角スペース可視化
-          </label>
-          <label for="ss11">
-            <input type="checkbox" id="ss11">
-            <code>ss11</code> 半濁点の強調
-          </label>
-        </div>
-        <textarea class="preview-text textarea">
-彼らの機器や装置はすべて生命体だ。
-Almost before we knew it, we had left the ground.
-
-!=->>++:=</textarea>
+        <fieldset id="preview-config" disabled>
+          <div class="field">
+            <div class="select">
+              <select id="subfamily">
+                <option value="firple">Firple</option>
+                <option value="firple-slim">Firple Slim</option>
+              </select>
+            </div>
+            <button class="button" id="bold-button">
+              <span class="icon is-small">
+                <i class="ri-bold"></i>
+              </span>
+            </button>
+            <button class="button" id="italic-button">
+              <span class="icon is-small">
+                <i class="ri-italic"></i>
+              </span>
+            </button>
+          </div>
+          <div class="field">
+            <label>
+              <span id="weight-text"></span>
+              <input type="range" id="weight-slider" min="10" max="50">
+            </label>
+          </div>
+          <div class="field">
+            <label>
+              <input type="checkbox" id="ligature-checkbox" checked>
+              リガチャを有効にする
+            </label>
+          </div>
+          <div class="field">
+            <label>
+              <input type="checkbox" class="feature-checkbox" data-tag="cv33" name="cv33-checkbox">
+              <code>cv33</code> 全角スペース可視化
+            </label>
+            <label>
+              <input type="checkbox" class="feature-checkbox" data-tag="ss11" name="ss11-checkbox">
+              <code>ss11</code> 半濁点の強調
+            </label>
+          </div>
+          <textarea class="textarea" id="preview-text">読み込み中...</textarea>
+        </fieldset>
       </div>
     </section>
 
@@ -254,10 +255,13 @@ Almost before we knew it, we had left the ground.
       <div class="content">
         <h2 class="title is-3" id="download">ダウンロード</h2>
         <p>以下のボタンからフォントをダウンロードできます。</p>
-        <a href="https://github.com/negset/Firple/releases" target="_blank">
-          <img alt="ダウンロード"
-            src="https://img.shields.io/github/downloads/negset/Firple/total?style=for-the-badge&logo=github&color=485fc7">
-        </a>
+        <p>
+          <a href="https://github.com/negset/Firple/releases" target="_blank">
+            <img alt="ダウンロード"
+              src="https://img.shields.io/github/downloads/negset/Firple/total?style=for-the-badge&logo=github&color=485fc7">
+          </a>
+        </p>
+        <p>GitHub の Star を付けて頂けると、開発の励みになります。</p>
       </div>
     </section>
 
