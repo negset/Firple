@@ -103,7 +103,7 @@ Fira Code の字幅を縮小しています。1 行に多くの文字を表示�
 - 動作確認済み環境
 
   ```
-  Ubuntu 24.04.2 LTS
+  Ubuntu 24.04.3 LTS
   Python 3.12.3
   fontforge 20230101
   fonttools v4.46.0
