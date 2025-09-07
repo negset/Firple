@@ -73,7 +73,7 @@ pre,
 }
 
 .navbar-burger::before {
-  font-family: 'remixicon' !important;
+  font-family: "remixicon";
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -128,17 +128,12 @@ pre,
 }
 
 .button {
-  font-weight: 700;
-  letter-spacing: .1em;
-}
-
-.button .icon {
-  font-weight: 400;
+  font-family: var(--bulma-family-primary);
 }
 
 h2.title::before {
   color: #485fc7;
-  font-family: 'remixicon' !important;
+  font-family: "remixicon";
   font-weight: 400;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
@@ -183,7 +178,7 @@ h3.title {
 }
 
 h3.title::before {
-  font-family: 'remixicon' !important;
+  font-family: "remixicon";
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -195,7 +190,7 @@ h3.title::before {
   user-select: none;
 }
 
-.field>label + label {
+.field>label+label {
   margin-left: 1rem;
 }
 
