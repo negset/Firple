@@ -9,9 +9,9 @@
 
 以下のボタンからフォントをダウンロードできます。
 
-<a href="https://github.com/negset/Firple/releases" target="_blank">
+<p><a href="https://github.com/negset/Firple/releases" target="_blank">
   <img alt="ダウンロード" src="https://img.shields.io/github/downloads/negset/Firple/total?style=for-the-badge&logo=github&color=485fc7">
-</a>
+</a></p>
 
 Star を付けて頂けると、開発の励みになります。
 
