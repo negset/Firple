@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const v = e.target.value;
     textArea.style.fontFamily = (v == "firple") ? "Firple" : "Firple Slim";
   };
+  // bold, italic
   const boldButton = document.querySelector("#bold-button");
   boldButton.onclick = () => {
     let active = boldButton.classList.toggle("is-active");
@@ -34,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let active = italicButton.classList.toggle("is-active");
     textArea.style.fontStyle = active ? "italic" : "normal";
   };
+  // weight
   const weightSlider = document.querySelector("#weight-slider");
   const weightText = document.querySelector("#weight-text");
   weightSlider.value = parseInt(getComputedStyle(textArea)["fontSize"]);
@@ -42,22 +44,18 @@ document.addEventListener("DOMContentLoaded", () => {
     textArea.style.fontSize = e.target.value + "px";
     weightText.innerHTML = e.target.value + "px";
   };
+  // ligature
   document.querySelector("#ligature-checkbox").oninput = e => {
     textArea.style.fontVariantLigatures = e.target.checked ? "normal" : "none";
   };
   // features
-  const features = {
-    cv33: false,
-    ss11: false,
-  };
-  function toggleFeature(tag) {
-    features[tag] = !features[tag];
-    textArea.style.fontFeatureSettings = Object.entries(features)
-      .map(([tag, enabled]) => `"${tag}" ${enabled ? 1 : 0}`)
-      .join(", ");
-  }
-  document.querySelectorAll(".feature-checkbox").forEach(e => {
-    e.oninput = () => toggleFeature(e.dataset.tag);
+  const featureCheckboxes = Array.from(document.querySelectorAll(".feature-checkbox"));
+  featureCheckboxes.forEach(checkbox => {
+    checkbox.oninput = () => {
+      textArea.style.fontFeatureSettings = featureCheckboxes
+        .map(e => `"${e.dataset.tag}" ${e.checked ? 1 : 0}`)
+        .join(", ");
+    };
   });
 
   // font loading
