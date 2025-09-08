@@ -70,6 +70,7 @@ pre,
 
 .navbar {
   box-shadow: 0 8px 16px rgb(10 10 10 / 10%);
+  --bulma-navbar-background-color: var(--bulma-scheme-main-bis);
 }
 
 .navbar-burger::before {
@@ -188,10 +189,12 @@ h3.title::before {
 
 .field>label {
   user-select: none;
+  display: inline-block;
+  white-space: nowrap;
 }
 
-.field>label+label {
-  margin-left: 1rem;
+.field>label:first-child {
+  margin-right: 1rem;
 }
 
 .textarea#preview-text {
