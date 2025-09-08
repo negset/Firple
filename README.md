@@ -22,29 +22,43 @@ Star を付けて頂けると、開発の励みになります。
   Fira Code のグリフを全てそのまま使用できます。  
   加えて、日本語文字や一部記号を IBM Plex Sans JP のグリフで補っています。
 
+  ![豊富なグリフ](https://github.com/negset/Firple/raw/sample-images/sample-extensive-glyph-set.webp)
+
 - 字幅を調整
 
   半角文字と全角文字の幅を 1:2 に揃えています。
+
+  ![字幅を調整](https://github.com/negset/Firple/raw/sample-images/sample-adjusted-width.webp)
 
 - リガチャ対応
 
   Fira Code が提供するプログラミング向けのリガチャを利用できます。
 
+  ![リガチャ対応](https://github.com/negset/Firple/raw/sample-images/sample-ligatures.webp)
+
 - 2 種のウェイト
 
   Regular と Bold の 2 ウェイトを提供しています。
+
+  ![2 種のウェイト](https://github.com/negset/Firple/raw/sample-images/sample-weight-types.webp)
 
 - 独自のイタリック体
 
   Firple 独自の字形を持ったイタリック体を提供しています。
 
+  ![独自のイタリック体](https://github.com/negset/Firple/raw/sample-images/sample-italic-glyphs.webp)
+
 - Slim ファミリー
 
   Fira Code の字幅を縮小した Slim ファミリーを提供しています。
 
+  ![Slim ファミリー](https://github.com/negset/Firple/raw/sample-images/sample-family-types.webp)
+
 - Nerd Fonts 対応
 
   [Nerd Fonts](https://www.nerdfonts.com/) の多彩なグリフを利用できます。
+
+  ![Nerd Fonts 対応](https://github.com/negset/Firple/raw/sample-images/sample-nerd-fonts.webp)
 
 ## フォント機能
 
