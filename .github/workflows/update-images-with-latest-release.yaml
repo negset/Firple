@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sample-images branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: sample-images
 
@@ -25,9 +25,6 @@ jobs:
         run: |
           unzip '*.zip'
           sudo mv Firple*.ttf /usr/share/fonts/ && fc-cache -fv
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
 
       - name: Set up svg-to-webp
         run: |
