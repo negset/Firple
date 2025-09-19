@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install dependencies
         run: sudo apt update && sudo apt install -y fontforge python3-fontforge fonttools ttfautohint
@@ -33,7 +33,7 @@ jobs:
     needs: build
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: firple-ttfs
 
@@ -53,20 +53,17 @@ jobs:
     needs: build
     steps:
       - name: Checkout sample-images branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: sample-images
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: firple-ttfs
 
       - name: Install fonts
         run: sudo mv Firple*.ttf /usr/share/fonts/ && fc-cache -fv
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
 
       - name: Set up svg-to-webp
         run: |
