@@ -1,3 +1,11 @@
+## Version 6.400 (2025/11/09)
+
+- IBM Plex Sans JP のバージョンを更新 (1.003 -> 1.004)
+- ベースフォント
+  - Fira Code Version 6.002
+  - IBM Plex Sans JP (TrueType/hinted) Version 1.004
+  - Nerd Fonts v3.4.0
+
 ## Version 6.300 (2025/09/05)
 
 - 全角英字が含まれていない問題を修正
